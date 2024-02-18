@@ -1,0 +1,14 @@
+{
+  "name": "raycast-ts",
+  "version": "0.1.0",
+  "description": "A raycast engine written in TypeScript",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "raycast"
+  ],
+  "author": "Leandro Del Arco",
+  "license": "MIT"
+}
