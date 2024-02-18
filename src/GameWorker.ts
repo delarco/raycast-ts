@@ -1,14 +1,16 @@
 import { InitializeMessage, WorkerMessage, WorkerMessageType } from "./events/WorkerMessage"
 import { Size } from "./interfaces/Size"
 import { Position } from "./interfaces/Position"
+import { Clock } from "./utils/Clock"
 
 class GameWorker {
 
   private context: OffscreenCanvasRenderingContext2D | null
   private resolution: Size
+  private clock = new Clock()
 
   private box: Position & Size = { x: 0, y: 0, z: 0, width: 25, height: 25 }
-  private vel: Position = { x: 1, y: 1, z: 0 }
+  private vel: Position = { x: 10, y: 10, z: 0 }
 
   constructor(private worker: Worker) { }
 
@@ -34,12 +36,14 @@ class GameWorker {
 
   private render(time: number) {
 
+    this.clock.tick(time)
+
     this.context!.clearRect(0, 0, this.resolution.width, this.resolution.height)
     this.context!.fillStyle = "#F00"
     this.context!.fillRect(this.box.x, this.box.y, this.box.width, this.box.height)
 
-    this.box.x += this.vel.x
-    this.box.y += this.vel.y
+    this.box.x += this.vel.x * this.clock.deltaTime
+    this.box.y += this.vel.y * this.clock.deltaTime
 
     if (this.box.x <= 0 || this.box.x + this.box.width >= this.resolution.width) {
       this.vel.x *= -1
