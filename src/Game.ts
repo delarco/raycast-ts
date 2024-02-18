@@ -21,7 +21,7 @@ export class Game {
         this.canvas.style.height = `${config.viewPort.height}px`;
 
         // debug border
-        if(config.debug) {
+        if (config.debug) {
             this.canvas.style.border = "2px solid black"
         }
     }
