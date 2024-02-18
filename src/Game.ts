@@ -1,4 +1,5 @@
 import { GameConfig } from "./GameConfig"
+import { InitializeMessage } from "./events/WorkerMessage"
 
 export class Game {
 
@@ -24,5 +25,10 @@ export class Game {
         if (config.debug) {
             this.canvas.style.border = "2px solid black"
         }
+
+        // setup and initialize worker
+        const offscreen = this.canvas.transferControlToOffscreen()
+        const worker = new Worker(new URL("./GameWorker", import.meta.url), { type: "module" })
+        worker.postMessage(new InitializeMessage(offscreen), [offscreen]);
     }
 }
