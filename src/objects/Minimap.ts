@@ -38,7 +38,7 @@ export class Minimap extends GameObject {
 
                 const tile = this.map.getTile(col, row)
 
-                if (tile === 1) {
+                if (tile?.solid) {
 
                     renderer.drawRect(
                         this.x + col * this.tileSize,
