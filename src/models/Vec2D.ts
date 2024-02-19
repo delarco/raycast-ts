@@ -4,16 +4,16 @@ export class Vec2D {
 
     public mag(): number {
 
-        return Math.sqrt(this.x * this.x + this.y * this.y);
+        return Math.sqrt(this.x * this.x + this.y * this.y)
     }
 
     public mag2(): number {
 
-        return this.x * this.x + this.y * this.y;
+        return this.x * this.x + this.y * this.y
     }
 
     public clone(): Vec2D {
 
-        return new Vec2D(this.x, this.y);
+        return new Vec2D(this.x, this.y)
     }
 }

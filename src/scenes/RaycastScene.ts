@@ -1,37 +1,35 @@
 import { Renderer } from "../interfaces/Renderer";
 import { Scene } from "../models/Scene"
-import { GameObject } from "../models/GameObject";
 import { Map } from "../models/Map";
 import { Minimap } from "../objects/Minimap";
 import { MovingRectangle } from "../objects/MovingRectangle";
-import { Clock } from "../utils/Clock";
 import { Color } from "../models/Color";
-import { Size } from "../interfaces/Size";
-import { Position } from "../interfaces/Position";
 import { Camera } from "../models/Camera";
+import { MapUtils } from "../utils/Map.utils";
 
 export class RaycastScene extends Scene {
 
     private map: Map
     private camera: Camera
-    
+
     public async preload(): Promise<void> {
 
         // load map
-        this.map = new Map()
-        this.map.size = { width: 10, height: 10 }
-        this.map.tiles = [
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 1, 1, 1, 0, 0, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 0, 0, 1, 1, 1, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 1, 1, 1, 0, 1,
-            1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        ]
+        this.map = MapUtils.fromIntArray(
+            [
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                1, 1, 1, 1, 0, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                1, 0, 0, 1, 1, 1, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 1, 1, 1, 0, 1,
+                1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            ],
+            { width: 10, height: 10 }
+        )
     }
 
     public init(): void {
@@ -46,7 +44,7 @@ export class RaycastScene extends Scene {
     }
 
     public override draw(renderer: Renderer): void {
-        
+
         // raycast draw
         this.drawMap(renderer)
 
