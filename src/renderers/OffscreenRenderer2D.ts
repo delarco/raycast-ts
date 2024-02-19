@@ -5,7 +5,9 @@ import { Color } from "../models/Color";
 export class OffscreenRenderer2D implements Renderer {
 
     private context: OffscreenCanvasRenderingContext2D
-    private resolution: Size
+    private _resolution: Size
+
+    public get resolution() { return this._resolution }
 
     constructor(private offscreenCanvas: OffscreenCanvas) {
 
@@ -17,14 +19,14 @@ export class OffscreenRenderer2D implements Renderer {
 
         this.context = context
 
-        this.resolution = {
+        this._resolution = {
             width: offscreenCanvas.width,
             height: offscreenCanvas.height
         }
     }
 
     clear(color?: Color | undefined): void {
-        
+
         if (color) {
             this.drawRect(0, 0, this.resolution.width, this.resolution.height, color)
         }

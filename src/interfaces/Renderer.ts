@@ -1,6 +1,9 @@
 import { Color } from "../models/Color"
+import { Size } from "../interfaces/Size"
 
 export interface Renderer {
+
+    resolution: Size
 
     clear(color?: Color): void
 
