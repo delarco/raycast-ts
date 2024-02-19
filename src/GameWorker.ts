@@ -3,32 +3,39 @@ import { Size } from "./interfaces/Size"
 import { Clock } from "./utils/Clock"
 import { OffscreenRenderer2D } from "./renderers/OffscreenRenderer2D"
 import { Renderer } from "./interfaces/Renderer"
-import { MovingRectangle } from "./objects/MovingRectangle"
+import { Scene } from "./models/Scene"
+import { RaycastScene } from "./scenes/RaycastScene"
 
-class GameWorker {
+export class GameWorker {
 
   private renderer: Renderer
-  private resolution: Size
+  private _resolution: Size
   private clock = new Clock()
+  private currentScene: Scene
 
-  private box: MovingRectangle
+  public get resolution() { return this._resolution }
 
   constructor(private worker: Worker) { }
 
-  public initialize(message: InitializeMessage) {
+  public async initialize(message: InitializeMessage): Promise<void> {
 
     console.log("[Worker] initialize");
 
     this.renderer = new OffscreenRenderer2D(message.offscreen)
 
-    this.resolution = {
+    this._resolution = {
       width: message.offscreen.width,
       height: message.offscreen.height
     }
 
     console.log(`[Worker] resolution ${this.resolution.width}x${this.resolution.height}`)
 
-    this.box = new MovingRectangle(0, 0, 25, 25)
+    this.currentScene = new RaycastScene(this)
+
+    // show loading
+    await this.currentScene.preload()
+    this.currentScene.init()
+    // hide loading
 
     requestAnimationFrame((time) => this.render(time))
   }
@@ -36,10 +43,9 @@ class GameWorker {
   private render(time: number) {
 
     this.clock.tick(time)
-
     this.renderer.clear()
-    this.box.update(this.clock)
-    this.box.draw(this.renderer)
+    this.currentScene.update(this.clock)
+    this.currentScene.draw(this.renderer)
 
     requestAnimationFrame((time) => this.render(time))
   }
