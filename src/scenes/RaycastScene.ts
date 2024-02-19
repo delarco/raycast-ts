@@ -15,8 +15,6 @@ export class RaycastScene extends Scene {
     private map: Map
     private camera: Camera
     
-    
-
     public async preload(): Promise<void> {
 
         // load map
@@ -40,20 +38,30 @@ export class RaycastScene extends Scene {
 
         this.camera = new Camera(100, 100)
 
-        const minimapSize = Math.floor(this.gameInstance.resolution.width / 4)
-
-        const minimapPos: Position = {
-            x: this.gameInstance.resolution.width - minimapSize - 4,
-            y: 4,
-            z: 0
-        }
-
-        const minimap = new Minimap(minimapPos.x, minimapPos.y, minimapSize, minimapSize, this.map, this.camera)
+        const minimap = new Minimap(this.map, this.camera)
         const box = new MovingRectangle(0, 0, 25, 25, Color.RED)
 
         this.add(minimap)
         this.add(box)
+    }
 
+    public override draw(renderer: Renderer): void {
         
+        // raycast draw
+        this.drawMap(renderer)
+
+        // draw sprites
+        this.drawSprites(renderer)
+
+        // draw objects
+        super.draw(renderer)
+    }
+
+    private drawMap(renderer: Renderer): void {
+
+    }
+
+    private drawSprites(renderer: Renderer): void {
+
     }
 }
