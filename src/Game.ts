@@ -20,6 +20,7 @@ export class Game {
         this.canvas.height = config.resolution.height
         this.canvas.style.width = `${config.viewPort.width}px`;
         this.canvas.style.height = `${config.viewPort.height}px`;
+        this.canvas.style.imageRendering = "pixelated"
 
         // debug border
         if (config.debug) {
