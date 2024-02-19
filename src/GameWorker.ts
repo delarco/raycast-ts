@@ -5,16 +5,17 @@ import { OffscreenRenderer2D } from "./renderers/OffscreenRenderer2D"
 import { Renderer } from "./interfaces/Renderer"
 import { Scene } from "./models/Scene"
 import { RaycastScene } from "./scenes/RaycastScene"
+import { GameConfig } from "./GameConfig"
 
 export class GameWorker {
 
-  public readonly UNIT_SIZE = 32
-
+  private _config: GameConfig
   private renderer: Renderer
   private _resolution: Size
   private clock = new Clock()
   private currentScene: Scene
 
+  public get config() { return this._config }
   public get resolution() { return this._resolution }
 
   constructor(private worker: Worker) { }
@@ -22,6 +23,8 @@ export class GameWorker {
   public async initialize(message: InitializeMessage): Promise<void> {
 
     console.log("[Worker] initialize");
+
+    this._config = message.config
 
     this.renderer = new OffscreenRenderer2D(message.offscreen)
 

@@ -10,9 +10,13 @@ export class Game {
         if (config.element instanceof HTMLCanvasElement) {
             this.canvas = config.element
         }
+        else if (config.element) {
+            this.canvas = document.createElement("canvas")
+            config.element.appendChild(this.canvas)
+        }
         else {
             this.canvas = document.createElement("canvas")
-            this.canvas = config.element.appendChild(this.canvas)
+            window.document.appendChild(this.canvas)
         }
 
         // set canvas sizes
@@ -30,6 +34,6 @@ export class Game {
         // setup and initialize worker
         const offscreen = this.canvas.transferControlToOffscreen()
         const worker = new Worker(new URL("./GameWorker", import.meta.url), { type: "module" })
-        worker.postMessage(new InitializeMessage(offscreen), [offscreen]);
+        worker.postMessage(new InitializeMessage(offscreen, config.configToWorker()), [offscreen]);
     }
 }

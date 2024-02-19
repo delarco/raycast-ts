@@ -77,4 +77,21 @@ export class GameConfig {
         this._backgroundColor = backgroundColor
         this._debug = debug
     }
+
+    /**
+     * Workaround (because HTMLElement can't be cloned)
+     * @returns a GameConfig object without HTMLElement
+     */
+    public configToWorker(): GameConfig {
+
+        return new GameConfig(
+            null,
+            this.resolution,
+            this.viewPort,
+            this.fieldOfView,
+            this.unitSize,
+            this.backgroundColor,
+            this.debug
+        )
+    }
 }
