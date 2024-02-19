@@ -35,8 +35,14 @@ export class OffscreenRenderer2D implements Renderer {
         }
     }
 
+    flush(): void {
+
+    }
+
     drawPixel(x: number, y: number, color: Color): void {
-        throw new Error("Method not implemented.");
+
+        this.context.fillStyle = color.cssHex
+        this.context.fillRect(x, y, 1, 1)
     }
 
     drawLine(x1: number, y1: number, x2: number, y2: number, color: Color): void {

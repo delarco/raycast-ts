@@ -52,6 +52,8 @@ export class GameWorker {
     this.currentScene.update(this.clock)
     this.currentScene.draw(this.renderer)
 
+    this.renderer.flush()
+
     requestAnimationFrame((time) => this.render(time))
   }
 }
