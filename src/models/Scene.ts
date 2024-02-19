@@ -7,7 +7,7 @@ export class Scene {
 
     protected objects: Array<GameObject>
 
-    constructor(protected gameInstance: GameWorker) {
+    constructor(public gameInstance: GameWorker) {
 
         this.objects = []
     }
