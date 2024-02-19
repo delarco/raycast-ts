@@ -10,13 +10,18 @@ export class Minimap extends GameObject {
     private tileSize: number
     private tileColor = new Color(100, 100, 100)
 
-    constructor(x: number, y: number, width: number, height: number, private map: Map, private camera: Camera) {
+    constructor(private map: Map, private camera: Camera) {
         super()
+    }
 
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
+    public override init(): void {
+
+        const minimapSize = Math.floor(this.scene.gameInstance.resolution.width / 4)
+        
+        this.x = this.scene.gameInstance.resolution.width - minimapSize - 4
+        this.y = 4
+        this.width = minimapSize
+        this.height = minimapSize
         this.tileSize = Math.floor(this.width / this.map.size.width)
     }
 
@@ -50,8 +55,8 @@ export class Minimap extends GameObject {
     private drawCamera(renderer: Renderer): void {
 
         const ratio: Position = {
-            x: this.tileSize / this.scene.gameInstance.UNIT_SIZE,
-            y: this.tileSize / this.scene.gameInstance.UNIT_SIZE,
+            x: this.tileSize / this.scene.gameInstance.config.unitSize,
+            y: this.tileSize / this.scene.gameInstance.config.unitSize,
             z: 0
         }
 
