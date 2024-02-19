@@ -35,6 +35,8 @@ export class GameObject implements Position, Size {
         this.id = GameObject.idCounter++
     }
 
+    public init(): void { }
+
     public draw(renderer: Renderer): void { }
 
     public update(clock: Clock) { }

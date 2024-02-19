@@ -39,6 +39,7 @@ export class Scene {
     protected add(gameObject: GameObject): void {
 
         gameObject.scene = this
+        gameObject.init()
         this.objects.push(gameObject)
     }
 }
