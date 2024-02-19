@@ -1,8 +1,8 @@
 import { Renderer } from "../interfaces/Renderer";
-import { Scene } from "../interfaces/Scene"
+import { Scene } from "../models/Scene"
 import { Clock } from "../utils/Clock";
 
-export class RacycastScene implements Scene {
+export class RaycastScene extends Scene {
 
     preload(): Promise<void> {
         throw new Error("Method not implemented.");
