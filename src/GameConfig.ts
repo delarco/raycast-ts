@@ -82,16 +82,21 @@ export class GameConfig {
      * Workaround (because HTMLElement can't be cloned)
      * @returns a GameConfig object without HTMLElement
      */
-    public configToWorker(): GameConfig {
-
-        return new GameConfig(
-            null,
-            this.resolution,
-            this.viewPort,
-            this.fieldOfView,
-            this.unitSize,
-            this.backgroundColor,
-            this.debug
-        )
+    public configToWorker(): {
+        resolution: Size,
+        viewPort: Size,
+        fieldOfView: number,
+        unitSize: number,
+        backgroundColor: Color,
+        debug: boolean
+    } {
+        return {
+            resolution: this.resolution,
+            viewPort: this.viewPort,
+            fieldOfView: this.fieldOfView,
+            unitSize: this.unitSize,
+            backgroundColor: this.backgroundColor,
+            debug: this.debug
+        }
     }
 }
