@@ -1,11 +1,12 @@
 import { Size } from "../interfaces/Size"
+import { Tile } from "./Tile"
 
 export class Map {
 
-    public tiles: Array<number>
+    public tiles: Array<Tile>
     public size: Size
 
-    public getTile(x: number, y: number): number | null {
+    public getTile(x: number, y: number): Tile | null {
 
         if (x < 0 || x >= this.size.width) return null
         if (y < 0 || y >= this.size.height) return null
@@ -18,6 +19,6 @@ export class Map {
         if (x < 0 || x >= this.size.width) return false
         if (y < 0 || y >= this.size.height) return false
 
-        return this.tiles[y * this.size.width + x] === 1
+        return this.tiles[y * this.size.width + x].solid
     }
 }
