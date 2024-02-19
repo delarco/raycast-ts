@@ -2,23 +2,34 @@ import { Position } from "../interfaces/Position";
 import { Renderer } from "../interfaces/Renderer";
 import { Size } from "../interfaces/Size";
 import { Clock } from "../utils/Clock";
+import { Scene } from "./Scene";
 
 export class GameObject implements Position, Size {
 
     private static idCounter = 1
 
-    id: number
-    name: string
-    angle: number
-    visible: boolean
+    private _scene: Scene
 
-    x: number
-    y: number
-    z: number
-    width: number
-    height: number
+    public id: number
+    public name: string
+    public angle: number
+    public visible: boolean
 
-    velocity: Position
+    public x: number
+    public y: number
+    public z: number
+    public width: number
+    public height: number
+
+    public velocity: Position
+
+    public get scene() { return this._scene }
+
+    public set scene(sceneObject: Scene) {
+
+        if (this._scene) throw new Error("Scene already set for object")
+        this._scene = sceneObject
+    }
 
     constructor() {
         this.id = GameObject.idCounter++
