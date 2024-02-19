@@ -1,4 +1,3 @@
-export type { Position } from "./src/interfaces/Position"
 export type { Size } from "./src/interfaces/Size"
 export { Color } from "./src/models/Color"
 export { GameConfig } from "./src/GameConfig"

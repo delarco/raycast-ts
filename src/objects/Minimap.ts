@@ -1,9 +1,9 @@
-import { Position } from "../interfaces/Position";
 import { Renderer } from "../interfaces/Renderer";
 import { Camera } from "../models/Camera";
 import { Color } from "../models/Color";
 import { GameObject } from "../models/GameObject";
 import { Map } from "../models/Map";
+import { Vec2D } from "../models/Vec2D";
 
 export class Minimap extends GameObject {
 
@@ -17,7 +17,7 @@ export class Minimap extends GameObject {
     public override init(): void {
 
         const minimapSize = Math.floor(this.scene.gameInstance.resolution.width / 4)
-        
+
         this.x = this.scene.gameInstance.resolution.width - minimapSize - 4
         this.y = 4
         this.width = minimapSize
@@ -54,19 +54,17 @@ export class Minimap extends GameObject {
 
     private drawCamera(renderer: Renderer): void {
 
-        const ratio: Position = {
-            x: this.tileSize / this.scene.gameInstance.config.unitSize,
-            y: this.tileSize / this.scene.gameInstance.config.unitSize,
-            z: 0
-        }
+        const ratio = new Vec2D(
+            this.tileSize / this.scene.gameInstance.config.unitSize,
+            this.tileSize / this.scene.gameInstance.config.unitSize,
+        )
 
         const cameraSize = this.tileSize / 3
 
-        const cameraPos: Position = {
-            x: this.x + this.camera.x * ratio.x,
-            y: this.y + this.camera.y * ratio.y,
-            z: 0
-        }
+        const cameraPos = new Vec2D(
+            this.x + this.camera.x * ratio.x,
+            this.y + this.camera.y * ratio.y,
+        )
 
         renderer.drawRect(
             cameraPos.x,

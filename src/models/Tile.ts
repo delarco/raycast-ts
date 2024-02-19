@@ -1,11 +1,11 @@
 import { Side } from "../enums/Side";
-import { Position } from "../interfaces/Position";
 import { Color } from "./Color";
+import { Vec2D } from "./Vec2D";
 
 export class Tile {
 
     constructor(
-        public position: Position,
+        public position: Vec2D,
         public solid: boolean,
         public texture?: { [key in Side]: Color | null } | null,
         public detail?: { [key in Side]: Color | null } | null,

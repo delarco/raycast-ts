@@ -1,4 +1,5 @@
 import { Color } from "../models/Color";
+import { Vec2D } from "../models/Vec2D";
 import { Clock } from "../utils/Clock";
 import { Rectangle } from "./Rectangle";
 
@@ -6,7 +7,7 @@ export class MovingRectangle extends Rectangle {
 
     constructor(x: number, y: number, width: number, height: number, color = Color.BLUE) {
         super(x, y, width, height, color)
-        this.velocity = { x: 120, y: 15, z: 0 }
+        this.velocity = new Vec2D(120, 15)
     }
 
     public override update(clock: Clock): void {
