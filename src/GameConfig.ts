@@ -3,9 +3,11 @@ import { Color } from "./models/Color";
 
 export class GameConfig {
 
-    private _element: HTMLElement
+    private _element: HTMLElement | null
     private _resolution: Size
     private _viewPort: Size
+    private _fieldOfView: number
+    private _unitSize: number
     private _backgroundColor: Color
     private _debug: boolean
 
@@ -31,6 +33,20 @@ export class GameConfig {
     }
 
     /**
+     * Field of view.
+     */
+    public get fieldOfView() {
+        return this._fieldOfView
+    }
+
+    /**
+     * Field of view.
+     */
+    public get unitSize() {
+        return this._unitSize
+    }
+
+    /**
      * Canvas color.
      */
     public get backgroundColor() {
@@ -45,15 +61,19 @@ export class GameConfig {
     }
 
     constructor(
-        element: HTMLElement,
+        element: HTMLElement | null,
         resolution: Size = { width: 320, height: 240 },
         viewPort: Size = { width: 800, height: 600 },
+        fieldOfView: number = Math.PI / 3,
+        unitSize: number = 32,
         backgroundColor = Color.INDIGO,
         debug = true
     ) {
         this._element = element
         this._resolution = resolution
         this._viewPort = viewPort
+        this._fieldOfView = fieldOfView
+        this._unitSize = unitSize
         this._backgroundColor = backgroundColor
         this._debug = debug
     }
