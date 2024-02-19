@@ -2,10 +2,13 @@ import { InitializeMessage, WorkerMessage, WorkerMessageType } from "./events/Wo
 import { Size } from "./interfaces/Size"
 import { Position } from "./interfaces/Position"
 import { Clock } from "./utils/Clock"
+import { OffscreenRenderer2D } from "./renderers/OffscreenRenderer2D"
+import { Renderer } from "./interfaces/Renderer"
+import { Color } from "./models/Color"
 
 class GameWorker {
 
-  private context: OffscreenCanvasRenderingContext2D | null
+  private renderer: Renderer
   private resolution: Size
   private clock = new Clock()
 
@@ -18,11 +21,7 @@ class GameWorker {
 
     console.log("[Worker] initialize");
 
-    this.context = message.offscreen.getContext("2d")
-
-    if (!this.context) {
-      throw new Error("Can't get context")
-    }
+    this.renderer = new OffscreenRenderer2D(message.offscreen)
 
     this.resolution = {
       width: message.offscreen.width,
@@ -38,9 +37,9 @@ class GameWorker {
 
     this.clock.tick(time)
 
-    this.context!.clearRect(0, 0, this.resolution.width, this.resolution.height)
-    this.context!.fillStyle = "#F00"
-    this.context!.fillRect(this.box.x, this.box.y, this.box.width, this.box.height)
+    this.renderer.clear()
+
+    this.renderer.drawRect(this.box.x, this.box.y, this.box.width, this.box.height, Color.RED)
 
     this.box.x += this.vel.x * this.clock.deltaTime
     this.box.y += this.vel.y * this.clock.deltaTime
