@@ -6,7 +6,7 @@ export class MovingRectangle extends Rectangle {
 
     constructor(x: number, y: number, width: number, height: number, color = Color.BLUE) {
         super(x, y, width, height, color)
-        this.velocity = { x: 10, y: 10, z: 0 }
+        this.velocity = { x: 120, y: 15, z: 0 }
     }
 
     public override update(clock: Clock): void {
@@ -14,13 +14,13 @@ export class MovingRectangle extends Rectangle {
         this.x += this.velocity.x * clock.deltaTime
         this.y += this.velocity.y * clock.deltaTime
 
-        // if (this.x <= 0 || this.x + this.width >= this.resolution.width) {
-        //   this.vel.x *= -1
-        // }
+        if (this.x <= 0 || this.x + this.width >= this.scene.gameInstance.resolution.width) {
+            this.velocity.x *= -1
+        }
 
-        // if (this.box.y <= 0 || this.box.y + this.box.height >= this.resolution.height) {
-        //   this.vel.y *= -1
-        // }
+        if (this.y <= 0 || this.y + this.height >= this.scene.gameInstance.resolution.height) {
+            this.velocity.y *= -1
+        }
 
     }
 }
