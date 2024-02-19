@@ -8,6 +8,8 @@ import { RaycastScene } from "./scenes/RaycastScene"
 
 export class GameWorker {
 
+  public readonly UNIT_SIZE = 32
+
   private renderer: Renderer
   private _resolution: Size
   private clock = new Clock()
