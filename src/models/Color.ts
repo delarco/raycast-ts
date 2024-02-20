@@ -14,10 +14,10 @@ export class Color {
     public get g() { return this.color[1] }
     public get b() { return this.color[2] }
     public get a() { return this.color[3] }
-    
+
     public get cssHex() { return this._cssHex }
 
-    constructor(red: number, green: number, blue: number, alpha: number = 255) {
+    constructor(red: number = 0, green: number = 0, blue: number = 0, alpha: number = 255) {
 
         this.color = new Uint8Array([red, green, blue, alpha])
         this._cssHex = this.toCssHex()
