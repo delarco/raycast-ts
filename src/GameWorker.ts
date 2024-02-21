@@ -1,4 +1,4 @@
-import { InitializeMessage, KeyboardMessage, WorkerMessage, WorkerMessageType } from "./events/WorkerMessage"
+import { FpsMessage, InitializeMessage, KeyboardMessage, WorkerMessage, WorkerMessageType } from "./events/WorkerMessage"
 import { Size } from "./interfaces/Size"
 import { Clock } from "./utils/Clock"
 import { Renderer } from "./interfaces/Renderer"
@@ -39,7 +39,7 @@ export class GameWorker {
     console.log(`[Worker] resolution ${this.resolution.width}x${this.resolution.height}`)
 
     this._keyboardInput = new KeyboardInput()
-    
+
     this.currentScene = new RaycastScene(this)
 
     // show loading
@@ -58,6 +58,8 @@ export class GameWorker {
     this.currentScene.draw(this.renderer)
 
     this.renderer.flush()
+
+    if (this.clock.updateFps) this.worker.postMessage(new FpsMessage(this.clock.fps))
 
     requestAnimationFrame((time) => this.render(time))
   }
@@ -79,7 +81,7 @@ worker.addEventListener("message", (event: MessageEvent<WorkerMessage>) => {
     case WorkerMessageType.KEY_DOWN:
       gameWorker.keyboardInput.onKeyDown((event.data as KeyboardMessage).code)
       break
-      
+
     case WorkerMessageType.KEY_UP:
       gameWorker.keyboardInput.onKeyUp((event.data as KeyboardMessage).code)
       break
