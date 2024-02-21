@@ -32,4 +32,16 @@ export class Color {
         const b = this.b.toString(16).padStart(2, "0")
         return `#${r}${g}${b}`
     }
+
+    public shade(shade: number = 0.6): void {
+
+        this.color[0] *= shade;
+        this.color[1] *= shade;
+        this.color[2] *= shade;
+    }
+
+    public static shade(color: Color, shade: number = 0.6): Color {
+
+        return new Color(color.r * shade, color.g * shade, color.b * shade, color.a);
+    }
 }
