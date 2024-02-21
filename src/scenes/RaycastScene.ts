@@ -22,6 +22,7 @@ export class RaycastScene extends Scene {
 
     private angularVelocity = 2.5
     private velocity = 2.2
+    private ambientLight = 0.3
 
     public async preload(): Promise<void> {
 
@@ -178,17 +179,27 @@ export class RaycastScene extends Scene {
             // draw y
             for (let y = 0; y < resolution.height; y++) {
 
+                let pixelColor: Color
+
+                // ceiling
                 if (y <= Math.trunc(ceiling)) {
 
-                    renderer.drawPixel(x, y, Color.BLUE)
+                    pixelColor = Color.BLUE
                 }
+
+                // walls
                 else if (y > Math.trunc(ceiling) && y <= Math.trunc(floor)) {
 
+                    pixelColor = Color.WHITE
                 }
+
+                // floor
                 else {
 
-                    renderer.drawPixel(x, y, Color.RED)
+                    pixelColor = Color.RED
                 }
+
+                renderer.drawPixel(x, y, Color.shade(pixelColor, this.ambientLight))
             }
         }
     }
