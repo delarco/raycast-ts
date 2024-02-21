@@ -4,13 +4,13 @@ import { Clock } from "./utils/Clock"
 import { Renderer } from "./interfaces/Renderer"
 import { Scene } from "./models/Scene"
 import { RaycastScene } from "./scenes/RaycastScene"
-import { GameConfig } from "./GameConfig"
 import { OffscreenImageDataRenderer2D } from "./renderers/OffscreenImageDataRenderer2D"
 import { KeyboardInput } from "./input/Keyboard.input"
+import { GameWorkerConfig } from "./interfaces/GameWorkerConfig"
 
 export class GameWorker {
 
-  private _config: GameConfig
+  private _config: GameWorkerConfig
   private renderer: Renderer
   private _resolution: Size
   private clock = new Clock()

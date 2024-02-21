@@ -1,5 +1,6 @@
 import { Size } from "./interfaces/Size";
 import { Color } from "./models/Color";
+import { GameWorkerConfig } from "./interfaces/GameWorkerConfig"
 
 export class GameConfig {
 
@@ -82,14 +83,7 @@ export class GameConfig {
      * Workaround (because HTMLElement can't be cloned)
      * @returns a GameConfig object without HTMLElement
      */
-    public configToWorker(): {
-        resolution: Size,
-        viewPort: Size,
-        fieldOfView: number,
-        unitSize: number,
-        backgroundColor: Color,
-        debug: boolean
-    } {
+    public configToWorker(): GameWorkerConfig {
         return {
             resolution: this.resolution,
             viewPort: this.viewPort,

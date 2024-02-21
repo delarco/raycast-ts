@@ -1,4 +1,5 @@
 import { GameConfig } from "../GameConfig"
+import { GameWorkerConfig } from "../interfaces/GameWorkerConfig"
 
 export enum WorkerMessageType {
 
@@ -15,7 +16,7 @@ export class InitializeMessage implements WorkerMessage {
 
     public type = WorkerMessageType.INITIALIZE
 
-    constructor(public offscreen: OffscreenCanvas, public config: GameConfig) { }
+    constructor(public offscreen: OffscreenCanvas, public config: GameWorkerConfig) { }
 }
 
 export class KeyboardMessage implements WorkerMessage {
