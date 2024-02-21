@@ -54,24 +54,31 @@ export class Minimap extends GameObject {
 
     private drawCamera(renderer: Renderer): void {
 
-        const ratio = new Vec2D(
-            this.tileSize / this.scene.gameInstance.config.unitSize,
-            this.tileSize / this.scene.gameInstance.config.unitSize,
-        )
-
-        const cameraSize = this.tileSize / 3
+        const cameraSize = 4
+        const halfCameraSize = 2
 
         const cameraPos = new Vec2D(
-            this.x + this.camera.x * ratio.x,
-            this.y + this.camera.y * ratio.y,
+            this.x + this.camera.x * this.tileSize,
+            this.y + this.camera.y * this.tileSize,
         )
 
         renderer.drawRect(
-            cameraPos.x,
-            cameraPos.y,
+            cameraPos.x - halfCameraSize,
+            cameraPos.y - halfCameraSize,
             cameraSize,
             cameraSize,
-            Color.GREEN
+            Color.RED
+        )
+
+        const pointerDest = new Vec2D(
+            cameraPos.x + Math.cos(this.camera.angle) * cameraSize,
+            cameraPos.y + Math.sin(this.camera.angle) * cameraSize,
+        )
+
+        renderer.drawPixel(
+            pointerDest.x,
+            pointerDest.y,
+            Color.RED
         )
     }
 }
