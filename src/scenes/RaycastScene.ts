@@ -2,7 +2,6 @@ import { Renderer } from "../interfaces/Renderer";
 import { Scene } from "../models/Scene"
 import { Map } from "../models/Map";
 import { Minimap } from "../objects/Minimap";
-import { MovingRectangle } from "../objects/MovingRectangle";
 import { Color } from "../models/Color";
 import { Camera } from "../models/Camera";
 import { Vec2D } from "../models/Vec2D";
@@ -13,6 +12,7 @@ import { VectorUtils } from "../utils/Vector.utils";
 import { Size } from "../interfaces/Size";
 import { Clock } from "../utils/Clock";
 import { KEYS, KeyboardInput } from "../input/Keyboard.input";
+import { Texture } from "../models/Texture";
 
 export class RaycastScene extends Scene {
 
@@ -42,6 +42,19 @@ export class RaycastScene extends Scene {
             ],
             { width: 10, height: 10 }
         )
+
+        const northTexture = Texture.fromColor(Color.RED, "orange", 32, true)
+        const southTexture = Texture.fromColor(Color.GREEN, "orange", 32, true)
+        const eastTexture = Texture.fromColor(Color.BLUE, "orange", 32, true)
+        const westTexture = Texture.fromColor(Color.ORANGE, "orange", 32, true)
+
+        for (const tile of this.map.tiles) {
+
+            tile.texture[Side.NORTH] = northTexture
+            tile.texture[Side.SOUTH] = southTexture
+            tile.texture[Side.EAST] = eastTexture
+            tile.texture[Side.WEST] = westTexture
+        }
     }
 
     public init(): void {
@@ -190,7 +203,8 @@ export class RaycastScene extends Scene {
                 // walls
                 else if (y > Math.trunc(ceiling) && y <= Math.trunc(floor)) {
 
-                    pixelColor = Color.WHITE
+                    let ty = (y - ceiling) / wallHeight;
+                    pixelColor = hit!.tile.texture[hit!.side!]!.sampleColor(hit!.tx!, ty)
                 }
 
                 // floor
