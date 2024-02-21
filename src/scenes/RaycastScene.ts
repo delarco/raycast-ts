@@ -12,11 +12,15 @@ import { TileHit } from "../interfaces/TileHit";
 import { VectorUtils } from "../utils/Vector.utils";
 import { Size } from "../interfaces/Size";
 import { Clock } from "../utils/Clock";
+import { KEYS, KeyboardInput } from "../input/Keyboard.input";
 
 export class RaycastScene extends Scene {
 
     private map: Map
     private camera: Camera
+    private keyboard: KeyboardInput
+
+    private angularVelocity = 2.5
 
     public async preload(): Promise<void> {
 
@@ -40,6 +44,8 @@ export class RaycastScene extends Scene {
 
     public init(): void {
 
+        this.keyboard = this.gameInstance.keyboardInput
+        
         this.camera = new Camera(3.5, 3.5, 0.7)
 
         const minimap = new Minimap(this.map, this.camera)
@@ -49,7 +55,16 @@ export class RaycastScene extends Scene {
 
     public override update(clock: Clock): void {
 
-        this.camera.angle += 0.8 * clock.deltaTime
+        if (this.keyboard.key(KEYS.ARROW_LEFT) || this.keyboard.key(KEYS.KEY_Q)) {
+
+            this.camera.angle -= this.angularVelocity * clock.deltaTime;
+        }
+
+        if (this.keyboard.key(KEYS.ARROW_RIGHT) || this.keyboard.key(KEYS.KEY_E)) {
+
+            this.camera.angle += this.angularVelocity * clock.deltaTime;
+        }
+
         super.update(clock)
     }
 
