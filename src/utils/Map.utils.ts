@@ -1,7 +1,7 @@
 import { Size } from "../interfaces/Size";
 import { Color } from "../models/Color";
 import { Map } from "../models/Map";
-import { Texture } from "../models/Texture";
+import { TextureUtils } from "./Texture.utils";
 import { Tile } from "../models/Tile";
 import { Vec2D } from "../models/Vec2D";
 
@@ -14,7 +14,7 @@ export class MapUtils {
         map.tiles = array.map(n => new Tile(
             new Vec2D(),
             n === 1,
-            Texture.fromColor(Color.WHITE),
+            TextureUtils.fromColor(Color.WHITE),
             null
         ))
         return map

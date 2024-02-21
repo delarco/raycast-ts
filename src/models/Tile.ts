@@ -2,15 +2,24 @@ import { Side } from "../enums/Side";
 import { Color } from "./Color";
 import { Vec2D } from "./Vec2D";
 import { Texture } from "./Texture"
+import { TextureUtils } from "../utils/Texture.utils";
 
 export class Tile {
+
+    public texture: { [key in Side]: Texture } | Texture
+    public detail: { [key in Side]: Texture | null } | Texture
 
     constructor(
         public position: Vec2D,
         public solid: boolean,
-        public texture: { [key in Side]: Texture } | Texture = Texture.fromColor(Color.WHITE),
-        public detail: { [key in Side]: Texture | null } | Texture | null,
+        texture: { [key in Side]: Texture } | Texture | null,
+        detail: { [key in Side]: Texture | null } | Texture | null,
     ) {
+
+        if (!texture) {
+
+            texture = TextureUtils.fromColor(Color.WHITE)
+        }
 
         if (texture instanceof Texture) {
 
