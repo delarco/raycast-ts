@@ -6,6 +6,7 @@ export enum WorkerMessageType {
     INITIALIZE,
     KEY_DOWN,
     KEY_UP,
+    FPS,
 }
 
 export interface WorkerMessage {
@@ -22,4 +23,11 @@ export class InitializeMessage implements WorkerMessage {
 export class KeyboardMessage implements WorkerMessage {
 
     constructor(public type: WorkerMessageType, public code: string) { }
+}
+
+export class FpsMessage implements WorkerMessage {
+
+    public type = WorkerMessageType.FPS
+
+    constructor(public fps: number) { }
 }
