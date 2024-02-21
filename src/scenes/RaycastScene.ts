@@ -21,6 +21,7 @@ export class RaycastScene extends Scene {
     private keyboard: KeyboardInput
 
     private angularVelocity = 2.5
+    private velocity = 2.2
 
     public async preload(): Promise<void> {
 
@@ -36,7 +37,7 @@ export class RaycastScene extends Scene {
                 1, 0, 0, 0, 0, 1, 1, 1, 0, 1,
                 1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
                 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
             ],
             { width: 10, height: 10 }
         )
@@ -45,7 +46,7 @@ export class RaycastScene extends Scene {
     public init(): void {
 
         this.keyboard = this.gameInstance.keyboardInput
-        
+
         this.camera = new Camera(3.5, 3.5, 0.7)
 
         const minimap = new Minimap(this.map, this.camera)
@@ -55,17 +56,55 @@ export class RaycastScene extends Scene {
 
     public override update(clock: Clock): void {
 
+        this.updateCameraRotation(clock)
+        this.updateCameraPosition(clock)
+        super.update(clock)
+    }
+
+    private updateCameraRotation(clock: Clock): void {
+
         if (this.keyboard.key(KEYS.ARROW_LEFT) || this.keyboard.key(KEYS.KEY_Q)) {
 
-            this.camera.angle -= this.angularVelocity * clock.deltaTime;
+            this.camera.angle -= this.angularVelocity * clock.deltaTime
         }
 
         if (this.keyboard.key(KEYS.ARROW_RIGHT) || this.keyboard.key(KEYS.KEY_E)) {
 
-            this.camera.angle += this.angularVelocity * clock.deltaTime;
+            this.camera.angle += this.angularVelocity * clock.deltaTime
+        }
+    }
+
+    private updateCameraPosition(clock: Clock): void {
+
+        const mov = new Vec2D(
+            Math.cos(this.camera.angle) * this.velocity * clock.deltaTime,
+            Math.sin(this.camera.angle) * this.velocity * clock.deltaTime
+        )
+
+        const strafe = new Vec2D(
+            Math.cos(this.camera.angle + Math.PI / 2) * this.velocity * clock.deltaTime,
+            Math.sin(this.camera.angle + Math.PI / 2) * this.velocity * clock.deltaTime
+        )
+
+        if (this.keyboard.key(KEYS.ARROW_UP) || this.keyboard.key(KEYS.KEY_W)) {
+
+            this.camera.position = VectorUtils.add(this.camera.position, mov)
         }
 
-        super.update(clock)
+        if (this.keyboard.key(KEYS.ARROW_DOWN) || this.keyboard.key(KEYS.KEY_S)) {
+
+            this.camera.position = VectorUtils.sub(this.camera.position, mov)
+        }
+
+        if (this.keyboard.key(KEYS.KEY_A)) {
+
+            this.camera.position = VectorUtils.sub(this.camera.position, strafe)
+        }
+
+        if (this.keyboard.key(KEYS.KEY_D)) {
+
+            this.camera.position = VectorUtils.add(this.camera.position, strafe)
+        }
     }
 
     public override draw(renderer: Renderer): void {
