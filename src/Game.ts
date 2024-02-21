@@ -1,5 +1,5 @@
 import { GameConfig } from "./GameConfig"
-import { InitializeMessage } from "./events/WorkerMessage"
+import { InitializeMessage, KeyboardMessage, WorkerMessageType } from "./events/WorkerMessage"
 
 export class Game {
 
@@ -35,5 +35,9 @@ export class Game {
         const offscreen = this.canvas.transferControlToOffscreen()
         const worker = new Worker(new URL("./GameWorker", import.meta.url), { type: "module" })
         worker.postMessage(new InitializeMessage(offscreen, config.configToWorker()), [offscreen]);
+
+        // wireup keyboard events
+        document.addEventListener("keydown", ev => worker.postMessage(new KeyboardMessage(WorkerMessageType.KEY_DOWN, ev.code)))
+        document.addEventListener("keyup", ev => worker.postMessage(new KeyboardMessage(WorkerMessageType.KEY_UP, ev.code)))
     }
 }
