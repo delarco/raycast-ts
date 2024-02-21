@@ -49,8 +49,28 @@ export class Texture {
         return this.getPixelColor(sx, sy);
     }
 
-    public static fromColor(color: Color, name: string = `COLOR_${color.cssHex}`): Texture {
+    private drawDebugBorders(): void {
 
-        return new Texture(name, 1, 1, [color])
+        for (let x = 0; x < this.width; x++) {
+
+            this.drawPixel(x, 0, Color.BLACK)
+            this.drawPixel(x, this.height - 1, Color.BLACK)
+        }
+
+        for (let y = 0; y < this.height; y++) {
+
+            this.drawPixel(0, y, Color.BLACK)
+            this.drawPixel(this.width - 1, y, Color.BLACK)
+        }
+
+        this.drawPixel(1, 1, Color.RED)
+        this.drawPixel(this.width - 2, this.height - 2, Color.GREEN)
+    }
+
+    public static fromColor(color: Color, name: string = `COLOR_${color.cssHex}`, debugBorders = false): Texture {
+
+        const texture = new Texture(name, 4, 4, [...new Array(4 * 4).keys()].map(() => color))
+        if (debugBorders) texture.drawDebugBorders()
+        return texture
     }
 }
