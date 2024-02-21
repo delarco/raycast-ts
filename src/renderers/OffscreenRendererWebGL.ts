@@ -1,6 +1,7 @@
 import { Renderer } from "../interfaces/Renderer";
 import { Size } from "../interfaces/Size";
 import { Color } from "../models/Color";
+import { Texture } from "../models/Texture";
 
 export class OffscreenRendererWebGL implements Renderer {
 
@@ -193,5 +194,9 @@ export class OffscreenRendererWebGL implements Renderer {
         this.rects.push(y + h)
         this.rects.push(x)
         this.rects.push(y)
+    }
+
+    drawTexture(x: number, y: number, texture: Texture, scale: number): void{
+        throw new Error("Method not implemented.");
     }
 }

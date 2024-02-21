@@ -1,6 +1,7 @@
 import { Renderer } from "../interfaces/Renderer";
 import { Size } from "../interfaces/Size";
 import { Color } from "../models/Color";
+import { Texture } from "../models/Texture";
 
 export class OffscreenRenderer2D implements Renderer {
 
@@ -52,5 +53,9 @@ export class OffscreenRenderer2D implements Renderer {
     drawRect(x: number, y: number, w: number, h: number, color: Color): void {
         this.context.fillStyle = color.cssHex
         this.context.fillRect(x, y, w, h)
+    }
+
+    drawTexture(x: number, y: number, texture: Texture, scale: number): void{
+        throw new Error("Method not implemented.");
     }
 }

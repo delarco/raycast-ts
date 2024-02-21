@@ -1,6 +1,7 @@
 import { Renderer } from "../interfaces/Renderer";
 import { Size } from "../interfaces/Size";
 import { Color } from "../models/Color";
+import { Texture } from "../models/Texture";
 
 export class OffscreenImageDataRenderer2D implements Renderer {
 
@@ -72,6 +73,16 @@ export class OffscreenImageDataRenderer2D implements Renderer {
         for (let px = 0; px < w; px++) {
             for (let py = 0; py < h; py++) {
                 this.drawPixel(x + px, y + py, color)
+            }
+        }
+    }
+
+    drawTexture(x: number, y: number, texture: Texture, scale: number): void{
+
+        // TODO: implement scale
+        for(let tx = 0; tx < texture.width; tx++) {
+            for(let ty = 0; ty < texture.height; ty++) {
+                this.drawPixel(x + tx, y + ty, texture.getPixelColor(tx, ty))
             }
         }
     }
