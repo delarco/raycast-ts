@@ -1,11 +1,11 @@
 import { InitializeMessage, WorkerMessage, WorkerMessageType } from "./events/WorkerMessage"
 import { Size } from "./interfaces/Size"
 import { Clock } from "./utils/Clock"
-import { OffscreenRenderer2D } from "./renderers/OffscreenRenderer2D"
 import { Renderer } from "./interfaces/Renderer"
 import { Scene } from "./models/Scene"
 import { RaycastScene } from "./scenes/RaycastScene"
 import { GameConfig } from "./GameConfig"
+import { OffscreenImageDataRenderer2D } from "./renderers/OffscreenImageDataRenderer2D"
 
 export class GameWorker {
 
@@ -26,7 +26,7 @@ export class GameWorker {
 
     this._config = message.config
 
-    this.renderer = new OffscreenRenderer2D(message.offscreen)
+    this.renderer = new OffscreenImageDataRenderer2D(message.offscreen)
 
     this._resolution = {
       width: message.offscreen.width,
