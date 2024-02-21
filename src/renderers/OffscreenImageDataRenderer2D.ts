@@ -31,15 +31,8 @@ export class OffscreenImageDataRenderer2D implements Renderer {
         this.colorBuffer = this.imageData.data
     }
 
-    clear(color: Color = Color.INDIGO): void {
+    clear(): void {
 
-        for (let index = 0; index < this.colorBuffer.length; index += 4) {
-
-            this.colorBuffer[index + 0] = color.r
-            this.colorBuffer[index + 1] = color.g
-            this.colorBuffer[index + 2] = color.b
-            this.colorBuffer[index + 3] = color.a
-        }
     }
 
     flush(): void {
@@ -58,9 +51,9 @@ export class OffscreenImageDataRenderer2D implements Renderer {
 
         const index = 4 * (y * this.resolution.width + x)
 
-        this.colorBuffer[index + 0] = color.r
-        this.colorBuffer[index + 1] = color.g
-        this.colorBuffer[index + 2] = color.b
+        this.colorBuffer[index + 0] = color.r * 0.6
+        this.colorBuffer[index + 1] = color.g * 0.6
+        this.colorBuffer[index + 2] = color.b * 0.6
         this.colorBuffer[index + 3] = color.a
     }
 
