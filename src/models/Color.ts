@@ -6,6 +6,8 @@ export class Color {
     public static readonly GREEN = new Color(0, 255, 0)
     public static readonly BLUE = new Color(0, 0, 255)
     public static readonly INDIGO = new Color(232, 234, 246)
+    public static readonly YELLOW = new Color(255, 255, 0)
+    public static readonly ORANGE = new Color(255, 160, 0)
 
     private color: Uint8Array
     private _cssHex: string
