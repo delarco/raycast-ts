@@ -39,9 +39,7 @@ export class GameWorker {
     console.log(`[Worker] resolution ${this.resolution.width}x${this.resolution.height}`)
 
     this._keyboardInput = new KeyboardInput()
-    console.log(this._keyboardInput);
-
-
+    
     this.currentScene = new RaycastScene(this)
 
     // show loading
