@@ -13,16 +13,20 @@ import { Size } from "../interfaces/Size";
 import { Clock } from "../utils/Clock";
 import { KEYS, KeyboardInput } from "../input/Keyboard.input";
 import { Texture } from "../models/Texture";
+import { TextureUtils } from "../utils/Texture.utils";
 
 export class RaycastScene extends Scene {
 
-    private map: Map
-    private camera: Camera
-    private keyboard: KeyboardInput
+    protected map: Map
+    protected camera: Camera
+    protected keyboard: KeyboardInput
 
-    private angularVelocity = 2.5
-    private velocity = 2.2
-    private ambientLight = 0.3
+    protected angularVelocity = 2.5
+    protected velocity = 2.2
+    protected ambientLight = 1.0
+
+    protected skybox: Texture | Color = Color.DARK_BLUE
+    protected floor: Texture | Color = Color.DARK_GREEN
 
     public async preload(): Promise<void> {
 
@@ -43,10 +47,13 @@ export class RaycastScene extends Scene {
             { width: 10, height: 10 }
         )
 
-        const northTexture = Texture.fromColor(Color.RED, "orange", 32, true)
-        const southTexture = Texture.fromColor(Color.GREEN, "orange", 32, true)
-        const eastTexture = Texture.fromColor(Color.BLUE, "orange", 32, true)
-        const westTexture = Texture.fromColor(Color.ORANGE, "orange", 32, true)
+        const northTexture = TextureUtils.fromColor(Color.RED, "red", 32, true)
+        const southTexture = TextureUtils.fromColor(Color.GREEN, "green", 32, true)
+        const eastTexture = TextureUtils.fromColor(Color.BLUE, "blue", 32, true)
+        const westTexture = TextureUtils.fromColor(Color.ORANGE, "orange", 32, true)
+        const floorTexture = TextureUtils.fromColor(Color.YELLOW, "yellow", 32, true)
+        const ceilingTexture = TextureUtils.fromColor(Color.INDIGO, "indigo", 32, true)
+        const smileSticker = TextureUtils.makeSmileSticker(true)
 
         for (const tile of this.map.tiles) {
 
@@ -54,14 +61,29 @@ export class RaycastScene extends Scene {
             tile.texture[Side.SOUTH] = southTexture
             tile.texture[Side.EAST] = eastTexture
             tile.texture[Side.WEST] = westTexture
+            tile.texture[Side.BOTTOM] = floorTexture
+            tile.texture[Side.TOP] = null
+
+            tile.detail[Side.NORTH] = smileSticker
+            tile.detail[Side.SOUTH] = smileSticker
+            tile.detail[Side.EAST] = smileSticker
+            tile.detail[Side.WEST] = smileSticker
+            tile.detail[Side.BOTTOM] = smileSticker
+            tile.detail[Side.TOP] = smileSticker
         }
+
+        this.map.tiles[11].texture[Side.TOP] = northTexture
+        this.map.tiles[21].texture[Side.TOP] = floorTexture
+        this.map.tiles[13].texture[Side.TOP] = floorTexture
+
+        this.skybox = TextureUtils.makeSkyBoxNightTexture(this.gameInstance.resolution.height)
     }
 
     public init(): void {
 
         this.keyboard = this.gameInstance.keyboardInput
 
-        this.camera = new Camera(3.5, 3.5, 0.7)
+        this.camera = new Camera(3.5, 3.5, 0)
 
         const minimap = new Minimap(this.map, this.camera)
 
@@ -192,28 +214,83 @@ export class RaycastScene extends Scene {
             // draw y
             for (let y = 0; y < resolution.height; y++) {
 
-                let pixelColor: Color
+                let pixelColor: Color | null = null
 
                 // ceiling
                 if (y <= Math.trunc(ceiling)) {
 
-                    pixelColor = Color.BLUE
+                    const planeZ = halfResolution.height / (halfResolution.height - y)
+                    const planePoint = VectorUtils.add(this.camera.position, VectorUtils.mul(rayDirection, planeZ * 2.0 / Math.cos(rayAngle - this.camera.angle)))
+                    const tilePos = VectorUtils.int(planePoint)
+                    const tex = new Vec2D(planePoint.x - tilePos.x, planePoint.y - tilePos.y)
+                    const tile = this.map.getTile(tilePos.y, tilePos.x)
+
+                    if (tile?.detail[Side.TOP]) {
+
+                        const detailColor = tile.detail[Side.TOP].sampleColor(tex.x, tex.y)
+                        if (detailColor?.a == 255) pixelColor = detailColor
+                    }
+
+                    if (!pixelColor && tile?.texture && tile.texture[Side.TOP]) {
+
+                        pixelColor = tile.texture[Side.TOP].sampleColor(tex.x, tex.y)
+                    }
+
+                    if (!pixelColor) pixelColor = this.getSkyboxColor(rayAngle, y)
                 }
 
                 // walls
                 else if (y > Math.trunc(ceiling) && y <= Math.trunc(floor)) {
 
-                    let ty = (y - ceiling) / wallHeight;
+                    let ty = (y - ceiling) / wallHeight
                     pixelColor = hit!.tile.texture[hit!.side!]!.sampleColor(hit!.tx!, ty)
+
+                    if (hit!.tile.detail[hit!.side!]) {
+
+                        const detailColor = hit!.tile.detail![hit!.side!]?.sampleColor(hit!.tx!, ty)
+                        if (detailColor?.a == 255) pixelColor = detailColor
+                    }
                 }
 
                 // floor
                 else {
 
-                    pixelColor = Color.RED
+                    const planeZ = halfResolution.height / (y - halfResolution.height)
+                    const planePoint = VectorUtils.add(this.camera.position, VectorUtils.mul(rayDirection, planeZ * 2.0 / Math.cos(rayAngle - this.camera.angle)))
+                    const tilePos = VectorUtils.int(planePoint)
+                    const tex = new Vec2D(planePoint.x - tilePos.x, planePoint.y - tilePos.y)
+                    const tile = this.map.getTile(tilePos.y, tilePos.x)
+
+                    if (tile?.detail[Side.BOTTOM]) {
+
+                        const detailColor = tile.detail[Side.BOTTOM].sampleColor(tex.x, tex.y)
+                        if (detailColor?.a == 255) pixelColor = detailColor
+                    }
+
+                    if (!pixelColor && tile?.texture[Side.BOTTOM]) {
+
+                        pixelColor = tile.texture[Side.BOTTOM].sampleColor(tex.x, tex.y)
+                    }
+
+                    if (!pixelColor) {
+
+                        if(this.floor instanceof Color) {
+
+                            pixelColor = this.floor
+                        }
+                        else {
+
+                            pixelColor = this.floor.sampleColor(tex.x, tex.y)
+                        }
+                            
+                    }
                 }
 
-                renderer.drawPixel(x, y, Color.shade(pixelColor, this.ambientLight))
+                if (!pixelColor) pixelColor = Color.BLACK
+
+                // TODO: move shade alg to drawPixel (cloning each pixel color is too expensive)
+                // renderer.drawPixel(x, y, Color.shade(pixelColor, this.ambientLight))
+                renderer.drawPixel(x, y, pixelColor)
             }
         }
     }
@@ -365,5 +442,15 @@ export class RaycastScene extends Scene {
         }
 
         return hit
+    }
+
+    private getSkyboxColor(rayAngle: number, y: number): Color {
+
+        if (this.skybox instanceof Color) return this.skybox
+
+        let tx = rayAngle * (1 / (2 * Math.PI)) % 1
+        if (tx < 0) tx = 1 + tx
+        const ty = y / (this.gameInstance.resolution.height - 1)
+        return this.skybox.sampleColor(tx, ty)
     }
 }
