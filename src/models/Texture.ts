@@ -67,9 +67,9 @@ export class Texture {
         this.drawPixel(this.width - 2, this.height - 2, Color.GREEN)
     }
 
-    public static fromColor(color: Color, name: string = `COLOR_${color.cssHex}`, debugBorders = false): Texture {
+    public static fromColor(color: Color, name: string = `COLOR_${color.cssHex}`, size: number = 4, debugBorders = false): Texture {
 
-        const texture = new Texture(name, 4, 4, [...new Array(4 * 4).keys()].map(() => color))
+        const texture = new Texture(name, size, size, [...new Array(size * size).keys()].map(() => color))
         if (debugBorders) texture.drawDebugBorders()
         return texture
     }
