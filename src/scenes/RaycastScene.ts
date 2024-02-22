@@ -19,10 +19,7 @@ export class RaycastScene extends Scene {
     protected camera: Camera = new Camera(0, 0, 0)
     protected keyboard: KeyboardInput | null = null
 
-    protected angularVelocity = 2.5
-    protected velocity = 2.2
     protected ambientLight = 1.0
-
     protected skybox: Texture | Color = Color.DARK_BLUE
     protected floor: Texture | Color = Color.DARK_GREEN
 
@@ -61,12 +58,12 @@ export class RaycastScene extends Scene {
 
         if (this.keyboard.key(KEYS.ARROW_LEFT) || this.keyboard.key(KEYS.KEY_Q)) {
 
-            this.camera.angle -= this.angularVelocity * clock.deltaTime
+            this.camera.angle -= this.camera.angularVelocity * clock.deltaTime
         }
 
         if (this.keyboard.key(KEYS.ARROW_RIGHT) || this.keyboard.key(KEYS.KEY_E)) {
 
-            this.camera.angle += this.angularVelocity * clock.deltaTime
+            this.camera.angle += this.camera.angularVelocity * clock.deltaTime
         }
     }
 
@@ -75,13 +72,13 @@ export class RaycastScene extends Scene {
         if (!this.keyboard) return
 
         const mov = new Vec2D(
-            Math.cos(this.camera.angle) * this.velocity * clock.deltaTime,
-            Math.sin(this.camera.angle) * this.velocity * clock.deltaTime
+            Math.cos(this.camera.angle) * this.camera.velocity * clock.deltaTime,
+            Math.sin(this.camera.angle) * this.camera.velocity * clock.deltaTime
         )
 
         const strafe = new Vec2D(
-            Math.cos(this.camera.angle + Math.PI / 2) * this.velocity * clock.deltaTime,
-            Math.sin(this.camera.angle + Math.PI / 2) * this.velocity * clock.deltaTime
+            Math.cos(this.camera.angle + Math.PI / 2) * this.camera.velocity * clock.deltaTime,
+            Math.sin(this.camera.angle + Math.PI / 2) * this.camera.velocity * clock.deltaTime
         )
 
         if (this.keyboard.key(KEYS.ARROW_UP) || this.keyboard.key(KEYS.KEY_W)) {

@@ -8,18 +8,19 @@ export class GameObject implements Size {
 
     private static idCounter = 1
 
-    private _scene: Scene
+    private _scene!: Scene
     
     public id: number
-    public name: string
-    public angle: number
-    public visible: boolean
+    public name: string = ""
+    public angle: number = 0
+    public visible: boolean = true
     
     public position: Vec2D
-    public width: number
-    public height: number
+    public width: number = 0
+    public height: number = 0
 
-    public velocity: Vec2D
+    public velocity: number = 0
+    public angularVelocity: number = 0
 
     public get scene() { return this._scene }
 
