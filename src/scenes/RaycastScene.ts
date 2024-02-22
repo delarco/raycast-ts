@@ -26,6 +26,8 @@ export class RaycastScene extends Scene {
     protected skybox: Texture | Color = Color.DARK_BLUE
     protected floor: Texture | Color = Color.DARK_GREEN
 
+    protected wallDistanceShade = (distance: number): number => 1.0 - distance * 0.1
+
     public async preload(): Promise<void> {
 
     }
@@ -127,19 +129,6 @@ export class RaycastScene extends Scene {
             const rayAngle = (this.camera.angle - (fieldOfView / 2.0)) + (x / resolution.width) * fieldOfView
             const rayDirection = new Vec2D(Math.cos(rayAngle), Math.sin(rayAngle))
 
-            ////////////////////////////
-            // DEBUG //////////////////
-            // console.log(rayDirection)
-            // const minimapSize = Math.floor(this.gameInstance.resolution.height)
-            // const tileSize = Math.floor(minimapSize / this.map.size.width)
-            // renderer.drawPixel(
-            //     this.camera.x * tileSize + rayDirection.x * 40,
-            //     this.camera.y * tileSize + rayDirection.y * 40,
-            //     Color.BLACK
-            // )
-            ////////////////////////////
-            ////////////////////////////
-
             let rayLength = Infinity;
             let hit = this.castRay(this.camera.position, rayDirection)
 
@@ -151,20 +140,6 @@ export class RaycastScene extends Scene {
                 )
 
                 rayLength = ray.mag() * Math.cos(rayAngle - this.camera.angle)
-
-                ///////////////////////////
-                // DEBUG //////////////////
-                // const rayPos = new Vec2D(
-                //     hit.position.x * tileSize,
-                //     hit.position.y * tileSize,
-                // )
-                // renderer.drawPixel(
-                //     rayPos.x,
-                //     rayPos.y,
-                //     Color.RED
-                // )
-                ///////////////////////////
-                ///////////////////////////
             }
 
             const ceiling = (resolution.height / 2.0) - (resolution.height / rayLength)
@@ -175,6 +150,7 @@ export class RaycastScene extends Scene {
             for (let y = 0; y < resolution.height; y++) {
 
                 let pixelColor: Color | null = null
+                let shade = 1.0
 
                 // ceiling
                 if (y <= Math.trunc(ceiling)) {
@@ -210,6 +186,8 @@ export class RaycastScene extends Scene {
                         const detailColor = hit!.tile.detail![hit!.side!]?.sampleColor(hit!.tx!, ty)
                         if (detailColor?.a == 255) pixelColor = detailColor
                     }
+
+                    shade = this.wallDistanceShade(rayLength)
                 }
 
                 // floor
@@ -250,7 +228,7 @@ export class RaycastScene extends Scene {
 
                 // TODO: move shade alg to drawPixel (cloning each pixel color is too expensive)
                 // renderer.drawPixel(x, y, Color.shade(pixelColor, this.ambientLight))
-                renderer.drawPixel(x, y, pixelColor)
+                renderer.drawPixel(x, y, pixelColor, shade)
             }
         }
     }
