@@ -6,13 +6,13 @@ import { TextureUtils } from "../utils/Texture.utils";
 
 export class Tile {
 
-    public texture: { [key in Side]: Texture } | Texture
-    public detail: { [key in Side]: Texture | null } | Texture
+    public texture: { [key in Side]: Texture | null }
+    public detail: { [key in Side]: Texture | null }
 
     constructor(
         public position: Vec2D,
         public solid: boolean,
-        texture: { [key in Side]: Texture } | Texture | null,
+        texture: { [key in Side]: Texture | null } | Texture | null,
         detail: { [key in Side]: Texture | null } | Texture | null,
     ) {
 
@@ -30,7 +30,11 @@ export class Tile {
                 [Side.EAST]: texture,
                 [Side.TOP]: texture,
                 [Side.BOTTOM]: texture,
-            };
+            }
+        }
+        else {
+
+            this.texture = texture
         }
 
         if (detail instanceof Texture) {
@@ -54,6 +58,10 @@ export class Tile {
                 [Side.TOP]: null,
                 [Side.BOTTOM]: null,
             };
+        }
+        else {
+
+            this.detail = detail
         }
     }
 }
