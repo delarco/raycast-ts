@@ -1,13 +1,13 @@
 import { Clock } from "../utils/Clock"
 import { Renderer } from "../interfaces/Renderer"
 import { GameObject } from "../models/GameObject"
-import { GameWorker } from "../GameWorker"
+import { Game } from "../Game"
 
 export class Scene {
 
     protected objects: Array<GameObject>
 
-    constructor(public gameInstance: GameWorker) {
+    constructor(public gameInstance: Game) {
 
         this.objects = []
     }
