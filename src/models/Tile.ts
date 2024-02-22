@@ -28,8 +28,8 @@ export class Tile {
                 [Side.SOUTH]: texture,
                 [Side.WEST]: texture,
                 [Side.EAST]: texture,
-                [Side.TOP]: texture,
-                [Side.BOTTOM]: texture,
+                [Side.TOP]: null,
+                [Side.BOTTOM]: null,
             }
         }
         else {
@@ -44,8 +44,8 @@ export class Tile {
                 [Side.SOUTH]: detail,
                 [Side.WEST]: detail,
                 [Side.EAST]: detail,
-                [Side.TOP]: detail,
-                [Side.BOTTOM]: detail,
+                [Side.TOP]: null,
+                [Side.BOTTOM]: null,
             };
         }
         else if (!detail) {
