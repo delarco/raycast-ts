@@ -10,7 +10,7 @@ export interface Renderer {
 
     flush(): void
 
-    drawPixel(x: number, y: number, color: Color): void
+    drawPixel(x: number, y: number, color: Color, shade?: number): void
 
     drawLine(x1: number, y1: number, x2: number, y2: number, color: Color): void
 

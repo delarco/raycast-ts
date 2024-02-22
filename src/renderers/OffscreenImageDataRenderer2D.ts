@@ -12,7 +12,7 @@ export class OffscreenImageDataRenderer2D implements Renderer {
 
     public get resolution() { return this._resolution }
 
-    constructor(private offscreenCanvas: OffscreenCanvas) {
+    constructor(offscreenCanvas: OffscreenCanvas) {
 
         const context = offscreenCanvas.getContext("2d")
 
@@ -40,7 +40,7 @@ export class OffscreenImageDataRenderer2D implements Renderer {
         this.context.putImageData(this.imageData, 0, 0);
     }
 
-    drawPixel(x: number, y: number, color: Color): void {
+    drawPixel(x: number, y: number, color: Color, shade: number = 1.0): void {
 
         [x, y] = [~~x, ~~y];
 
@@ -51,9 +51,9 @@ export class OffscreenImageDataRenderer2D implements Renderer {
 
         const index = 4 * (y * this.resolution.width + x)
 
-        this.colorBuffer[index + 0] = color.r * 0.6
-        this.colorBuffer[index + 1] = color.g * 0.6
-        this.colorBuffer[index + 2] = color.b * 0.6
+        this.colorBuffer[index + 0] = color.r * shade
+        this.colorBuffer[index + 1] = color.g * shade
+        this.colorBuffer[index + 2] = color.b * shade
         this.colorBuffer[index + 3] = color.a
     }
 
@@ -70,11 +70,11 @@ export class OffscreenImageDataRenderer2D implements Renderer {
         }
     }
 
-    drawTexture(x: number, y: number, texture: Texture, scale: number): void{
+    drawTexture(x: number, y: number, texture: Texture, scale: number): void {
 
         // TODO: implement scale
-        for(let tx = 0; tx < texture.width; tx++) {
-            for(let ty = 0; ty < texture.height; ty++) {
+        for (let tx = 0; tx < texture.width; tx++) {
+            for (let ty = 0; ty < texture.height; ty++) {
                 this.drawPixel(x + tx, y + ty, texture.getPixelColor(tx, ty))
             }
         }
