@@ -5,7 +5,6 @@ import { Minimap } from "../objects/Minimap";
 import { Color } from "../models/Color";
 import { Camera } from "../models/Camera";
 import { Vec2D } from "../models/Vec2D";
-import { MapUtils } from "../utils/Map.utils";
 import { Side } from "../enums/Side";
 import { TileHit } from "../interfaces/TileHit";
 import { VectorUtils } from "../utils/Vector.utils";
@@ -13,13 +12,12 @@ import { Size } from "../interfaces/Size";
 import { Clock } from "../utils/Clock";
 import { KEYS, KeyboardInput } from "../input/Keyboard.input";
 import { Texture } from "../models/Texture";
-import { TextureUtils } from "../utils/Texture.utils";
 
 export class RaycastScene extends Scene {
 
-    protected map: Map
-    protected camera: Camera
-    protected keyboard: KeyboardInput
+    protected map: Map = new Map()
+    protected camera: Camera = new Camera(0, 0, 0)
+    protected keyboard: KeyboardInput | null = null
 
     protected angularVelocity = 2.5
     protected velocity = 2.2
@@ -30,53 +28,6 @@ export class RaycastScene extends Scene {
 
     public async preload(): Promise<void> {
 
-        // load map
-        this.map = MapUtils.fromIntArray(
-            [
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                1, 1, 1, 1, 0, 0, 0, 0, 0, 1,
-                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                1, 0, 0, 1, 1, 1, 0, 0, 0, 1,
-                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                1, 0, 0, 0, 0, 1, 1, 1, 0, 1,
-                1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
-                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
-            ],
-            { width: 10, height: 10 }
-        )
-
-        const northTexture = TextureUtils.fromColor(Color.RED, "red", 32, true)
-        const southTexture = TextureUtils.fromColor(Color.GREEN, "green", 32, true)
-        const eastTexture = TextureUtils.fromColor(Color.BLUE, "blue", 32, true)
-        const westTexture = TextureUtils.fromColor(Color.ORANGE, "orange", 32, true)
-        const floorTexture = TextureUtils.fromColor(Color.YELLOW, "yellow", 32, true)
-        const ceilingTexture = TextureUtils.fromColor(Color.INDIGO, "indigo", 32, true)
-        const smileSticker = TextureUtils.makeSmileSticker(true)
-
-        for (const tile of this.map.tiles) {
-
-            tile.texture[Side.NORTH] = northTexture
-            tile.texture[Side.SOUTH] = southTexture
-            tile.texture[Side.EAST] = eastTexture
-            tile.texture[Side.WEST] = westTexture
-            tile.texture[Side.BOTTOM] = floorTexture
-            tile.texture[Side.TOP] = null
-
-            tile.detail[Side.NORTH] = smileSticker
-            tile.detail[Side.SOUTH] = smileSticker
-            tile.detail[Side.EAST] = smileSticker
-            tile.detail[Side.WEST] = smileSticker
-            tile.detail[Side.BOTTOM] = smileSticker
-            tile.detail[Side.TOP] = smileSticker
-        }
-
-        this.map.tiles[11].texture[Side.TOP] = northTexture
-        this.map.tiles[21].texture[Side.TOP] = floorTexture
-        this.map.tiles[13].texture[Side.TOP] = floorTexture
-
-        this.skybox = TextureUtils.makeSkyBoxNightTexture(this.gameInstance.resolution.height)
     }
 
     public init(): void {
@@ -92,12 +43,19 @@ export class RaycastScene extends Scene {
 
     public override update(clock: Clock): void {
 
-        this.updateCameraRotation(clock)
-        this.updateCameraPosition(clock)
+        this.updateCamera(clock)
         super.update(clock)
     }
 
+    protected updateCamera(clock: Clock): void {
+
+        this.updateCameraRotation(clock)
+        this.updateCameraPosition(clock)
+    }
+
     private updateCameraRotation(clock: Clock): void {
+
+        if (!this.keyboard) return
 
         if (this.keyboard.key(KEYS.ARROW_LEFT) || this.keyboard.key(KEYS.KEY_Q)) {
 
@@ -111,6 +69,8 @@ export class RaycastScene extends Scene {
     }
 
     private updateCameraPosition(clock: Clock): void {
+
+        if (!this.keyboard) return
 
         const mov = new Vec2D(
             Math.cos(this.camera.angle) * this.velocity * clock.deltaTime,
@@ -274,7 +234,7 @@ export class RaycastScene extends Scene {
 
                     if (!pixelColor) {
 
-                        if(this.floor instanceof Color) {
+                        if (this.floor instanceof Color) {
 
                             pixelColor = this.floor
                         }
@@ -282,7 +242,7 @@ export class RaycastScene extends Scene {
 
                             pixelColor = this.floor.sampleColor(tex.x, tex.y)
                         }
-                            
+
                     }
                 }
 
@@ -296,7 +256,7 @@ export class RaycastScene extends Scene {
     }
 
     private drawSprites(renderer: Renderer): void {
-
+        // TODO: drawSprites
     }
 
     private castRay(origin: Vec2D, direction: Vec2D): TileHit | null {
