@@ -15,14 +15,25 @@ export class KeyboardInput {
 
     private keyState: { [key: string]: boolean } = {}
 
-    public onKeyDown(code: string): void {
+    constructor() {
 
-        this.keyState[code] = true
+        this.bindEvents();
     }
 
-    public onKeyUp(code: string): void {
+    private bindEvents(): void {
 
-        this.keyState[code] = false
+        document.addEventListener("keydown", ev => this.onDocumentKeyDown(ev))
+        document.addEventListener("keyup", ev => this.onDocumentKeyUp(ev))
+    }
+
+    private onDocumentKeyDown(ev: KeyboardEvent): void {
+
+        this.keyState[ev.code] = true;
+    }
+
+    private onDocumentKeyUp(ev: KeyboardEvent): void {
+
+        this.keyState[ev.code] = false
     }
 
     public key(key: KEYS) {
