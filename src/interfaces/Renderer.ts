@@ -18,5 +18,5 @@ export interface Renderer {
 
     drawRect(x1: number, y1: number, x2: number, y2: number, color: Color): void
 
-    drawTexture(x: number, y: number, texture: Texture, scale: number): void
+    drawTexture(x: number, y: number, texture: Texture, scale?: number): void
 }
