@@ -21,6 +21,7 @@ export class Game {
     public get config() { return this._config }
     public get resolution() { return this._resolution }
     public get keyboardInput() { return this._keyboardInput }
+    public get currentScene() { return this._currentScene }
 
     public onFpsChange: ((fps: number) => void) | null = null
     public onLoadingStart: (() => void) | null = null
