@@ -3,8 +3,8 @@ import { Tile } from "./Tile"
 
 export class Map {
 
-    public tiles: Array<Tile>
-    public size: Size
+    public tiles: Array<Tile> = []
+    public size: Size = { width: 0, height: 0 }
 
     public getTile(x: number, y: number): Tile | null {
 
