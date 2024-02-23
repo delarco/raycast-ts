@@ -27,7 +27,7 @@ export class RaycastScene extends Scene {
 
     protected sprites: Array<Sprite> = []
 
-    protected wallDistanceShade = (distance: number): number => 1.0 - distance * 0.1
+    protected distanceShade = (distance: number): number => 1.0 - distance * 0.1
 
     constructor(public gameInstance: Game) {
         super(gameInstance)
@@ -189,7 +189,7 @@ export class RaycastScene extends Scene {
                         if (detailColor?.a == 255) pixelColor = detailColor
                     }
 
-                    shade = this.wallDistanceShade(rayLength)
+                    shade = this.distanceShade(rayLength)
                 }
 
                 // floor
@@ -294,7 +294,7 @@ export class RaycastScene extends Scene {
                             Math.trunc(objectTopLeft.y + y)
                         )
 
-                        const shade = this.ambientLight * this.wallDistanceShade(distanceToObject)
+                        const shade = this.ambientLight * this.distanceShade(distanceToObject)
 
                         if (screenPos.x >= 0 && screenPos.x < resolution.width && screenPos.y >= 0 && screenPos.y < resolution.height && pixelColor.a == 255) {
 
