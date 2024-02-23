@@ -33,7 +33,8 @@ export class Color {
         const r = this.r.toString(16).padStart(2, "0")
         const g = this.g.toString(16).padStart(2, "0")
         const b = this.b.toString(16).padStart(2, "0")
-        return `#${r}${g}${b}`
+        const a = this.a.toString(16).padStart(2, "0")
+        return `#${r}${g}${b}${a}`
     }
 
     public shade(shade: number = 0.6): void {
