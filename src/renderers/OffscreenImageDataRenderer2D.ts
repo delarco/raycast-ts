@@ -103,7 +103,9 @@ export class OffscreenImageDataRenderer2D implements Renderer {
         // TODO: implement scale
         for (let tx = 0; tx < texture.width; tx++) {
             for (let ty = 0; ty < texture.height; ty++) {
-                this.drawPixel(x + tx, y + ty, texture.getPixelColor(tx, ty))
+                const pixelColor = texture.getPixelColor(tx, ty)
+                if (pixelColor.a < 50) continue
+                this.drawPixel(x + tx, y + ty, pixelColor)
             }
         }
     }
