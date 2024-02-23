@@ -12,6 +12,8 @@ export interface Renderer {
 
     drawPixel(x: number, y: number, color: Color, shade?: number): void
 
+    drawPixelDepth(x: number, y: number, z: number, color: Color, shade?: number): void
+
     drawLine(x1: number, y1: number, x2: number, y2: number, color: Color): void
 
     drawRect(x1: number, y1: number, x2: number, y2: number, color: Color): void
