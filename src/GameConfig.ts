@@ -34,10 +34,17 @@ export class GameConfig {
     }
 
     /**
-     * Field of view.
+     * Field of view getter.
      */
     public get fieldOfView() {
         return this._fieldOfView
+    }
+
+    /**
+     * Field of view setter.
+     */
+    public set fieldOfView(value: number) {
+        this._fieldOfView = value
     }
 
     /**
