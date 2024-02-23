@@ -5,6 +5,7 @@ import { Renderer } from "./interfaces/Renderer"
 import { Scene } from "./models/Scene"
 import { OffscreenImageDataRenderer2D } from "./renderers/OffscreenImageDataRenderer2D"
 import { Clock } from "./utils/Clock"
+import { TextureUtils } from "./utils/Texture.utils"
 
 export class Game {
 
@@ -68,6 +69,7 @@ export class Game {
 
         this._resolution = config.resolution
         console.log(`[Worker] resolution ${this.resolution.width}x${this.resolution.height}`)
+        TextureUtils.init(this.resolution)
 
         this._keyboardInput = new KeyboardInput()
         this._clock = new Clock()
