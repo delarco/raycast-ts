@@ -82,11 +82,14 @@ export class Game {
 
     public async start(sceneType: typeof Scene): Promise<void> {
 
-        this._currentScene = new sceneType(this)
+        const scene = new sceneType(this)
 
         // TODO: show loading
-        this._currentScene.preload()
-        this._currentScene.init()
+        scene.preload()
+        await scene.load.load()
+        scene.init()
         // TODO: hide loading
+
+        this._currentScene = scene
     }
 }
