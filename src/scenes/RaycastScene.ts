@@ -12,6 +12,7 @@ import { Size } from "../interfaces/Size";
 import { Clock } from "../utils/Clock";
 import { KEYS, KeyboardInput } from "../input/Keyboard.input";
 import { Texture } from "../models/Texture";
+import { Sprite } from "../models/Sprite";
 
 export class RaycastScene extends Scene {
 
@@ -22,6 +23,8 @@ export class RaycastScene extends Scene {
     protected ambientLight = 1.0
     protected skybox: Texture | Color = Color.DARK_BLUE
     protected floor: Texture | Color = Color.DARK_GREEN
+
+    protected sprites: Array<Sprite> = []
 
     protected wallDistanceShade = (distance: number): number => 1.0 - distance * 0.1
 
@@ -128,10 +131,11 @@ export class RaycastScene extends Scene {
 
             let rayLength = Infinity;
             let hit = this.castRay(this.camera.position, rayDirection)
+            let ray: Vec2D | null = null
 
             if (hit) {
 
-                const ray = new Vec2D(
+                ray = new Vec2D(
                     hit.position.x - this.camera.position.x,
                     hit.position.y - this.camera.position.y,
                 )
@@ -222,16 +226,83 @@ export class RaycastScene extends Scene {
                 }
 
                 if (!pixelColor) pixelColor = Color.BLACK
+                shade *= this.ambientLight
 
-                // TODO: move shade alg to drawPixel (cloning each pixel color is too expensive)
-                // renderer.drawPixel(x, y, Color.shade(pixelColor, this.ambientLight))
-                renderer.drawPixel(x, y, pixelColor, shade)
+                if (!ray) {
+
+                    renderer.drawPixel(x, y, pixelColor, shade)
+                }
+                else {
+
+                    renderer.drawPixelDepth(x, y, ray.mag(), pixelColor, shade)
+                }
             }
         }
     }
 
     private drawSprites(renderer: Renderer): void {
-        // TODO: drawSprites
+
+        for (let sprite of this.objects) {
+
+            if (!sprite.visible || !(sprite instanceof Sprite)) continue;
+
+            const resolution = this.gameInstance.resolution
+            const object: Vec2D = VectorUtils.sub(sprite.position, this.camera.position)
+            const distanceToObject = object.mag()
+
+            let objectAngle = Math.atan2(object.y, object.x) - this.camera.angle
+            if (objectAngle < -3.14159) objectAngle += 2.0 * 3.14159
+            if (objectAngle > 3.14159) objectAngle -= 2.0 * 3.14159
+
+            const inPlayerFOV = Math.abs(objectAngle) < (this.gameInstance.config.fieldOfView + (1.0 / distanceToObject)) / 2.0
+
+            if (inPlayerFOV && distanceToObject >= 0.5) {
+
+                const floorPoint = new Vec2D(
+                    (0.5 * ((objectAngle / (this.gameInstance.config.fieldOfView * 0.5))) + 0.5) * resolution.width,
+                    (resolution.height / 2.0) + (resolution.height / distanceToObject) / Math.cos(objectAngle / 2.0)
+                )
+
+                const objectSize: Size = {
+                    width: sprite.width,
+                    height: sprite.height
+                }
+
+                objectSize.width *= 2.0 * resolution.height
+                objectSize.height *= 2.0 * resolution.height
+
+                objectSize.width /= distanceToObject
+                objectSize.height /= distanceToObject
+
+                const objectTopLeft = new Vec2D(
+                    floorPoint.x - objectSize.width / 2.0,
+                    floorPoint.y - objectSize.height
+                )
+
+                for (let y = 0; y < objectSize.height; y++) {
+
+                    for (let x = 0; x < objectSize.width; x++) {
+
+                        const sampleX = x / objectSize.width
+                        const sampleY = y / objectSize.height
+
+                        const pixelColor = sprite.sampleColor(sampleX, sampleY)
+
+                        const screenPos = new Vec2D(
+                            Math.trunc(objectTopLeft.x + x),
+                            Math.trunc(objectTopLeft.y + y)
+                        )
+
+                        const shade = this.ambientLight * this.wallDistanceShade(distanceToObject)
+
+                        if (screenPos.x >= 0 && screenPos.x < resolution.width && screenPos.y >= 0 && screenPos.y < resolution.height && pixelColor.a == 255) {
+
+                            renderer.drawPixelDepth(screenPos.x, screenPos.y, distanceToObject, pixelColor, shade)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private castRay(origin: Vec2D, direction: Vec2D): TileHit | null {
