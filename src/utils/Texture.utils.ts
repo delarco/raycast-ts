@@ -1,7 +1,23 @@
+import { Size } from "../.."
 import { Color } from "../models/Color"
 import { Texture } from "../models/Texture"
+import { TextStyle } from "../interfaces/TextStyle"
 
 export class TextureUtils {
+
+    private static resolution: Size
+    private static offscrenCanvas: OffscreenCanvas
+    private static textContext: OffscreenCanvasRenderingContext2D
+
+    public static init(resolution: Size): void {
+
+        TextureUtils.resolution = resolution
+        TextureUtils.offscrenCanvas = new OffscreenCanvas(resolution.width, resolution.height)
+
+        const context = TextureUtils.offscrenCanvas.getContext("2d")
+        if (!context) throw new Error("Can't create get OffscreenCanvas context")
+        TextureUtils.textContext = context
+    }
 
     public static drawDebugBorders(texture: Texture): void {
 
@@ -204,5 +220,67 @@ export class TextureUtils {
         if (debugBorders) TextureUtils.drawDebugBorders(texture)
 
         return texture
+    }
+
+    public static async createTextTexture(name: string, text: string, style: TextStyle): Promise<Texture> {
+
+        return new Promise(resolve => {
+
+            style = {
+                color: Color.WHITE,
+                fontSize: 16,
+                fontFamily: "Console",
+                bold: false,
+                borderWidth: null,
+                borderColor: null,
+                ...style
+            }
+
+            const resolution = TextureUtils.resolution
+            const textContext = TextureUtils.textContext
+
+            textContext.clearRect(0, 0, resolution.width, resolution.height);
+            textContext.fillStyle = new Color(255, 255, 255, 0).cssHex
+            textContext.fillRect(0, 0, resolution.width, resolution.height)
+
+            textContext.fillStyle = style.color!.cssHex
+            textContext.font = `${style.bold ? 'bold' : ''} ${style.fontSize}px ${style.fontFamily}`
+
+            const metrics = textContext.measureText(text)
+            textContext.fillText(text, metrics.actualBoundingBoxLeft, metrics.actualBoundingBoxAscent)
+
+            if (style.borderWidth && style.borderColor) {
+                textContext.lineWidth = style.borderWidth;
+                textContext.strokeStyle = style.borderColor.cssHex;
+                textContext.strokeText(text, metrics.actualBoundingBoxLeft, metrics.actualBoundingBoxAscent);
+            }
+
+            const textImageData = textContext.getImageData(
+                0, 0,
+                Math.ceil(metrics.width),
+                metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent
+            )
+            const textBuffer = textImageData.data
+            const data = new Array<Color>()
+
+            for (let ty of new Array(textImageData.height).keys()) {
+
+                for (let tx of new Array(textImageData.width).keys()) {
+
+                    const textOffset = 4 * (ty * textImageData.width + tx);
+
+                    data.push(new Color(
+                        textBuffer[textOffset + 0],
+                        textBuffer[textOffset + 1],
+                        textBuffer[textOffset + 2],
+                        textBuffer[textOffset + 3]
+                    ))
+                }
+            }
+
+            const texture = new Texture(name, textImageData.width, textImageData.height, data)
+
+            resolve(texture)
+        })
     }
 }
