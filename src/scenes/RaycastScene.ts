@@ -13,6 +13,7 @@ import { Clock } from "../utils/Clock";
 import { KEYS, KeyboardInput } from "../input/Keyboard.input";
 import { Texture } from "../models/Texture";
 import { Sprite } from "../models/Sprite";
+import { Game } from "../Game";
 
 export class RaycastScene extends Scene {
 
@@ -28,18 +29,18 @@ export class RaycastScene extends Scene {
 
     protected wallDistanceShade = (distance: number): number => 1.0 - distance * 0.1
 
+    constructor(public gameInstance: Game) {
+        super(gameInstance)
+        this.keyboard = this.gameInstance.keyboardInput
+    }
+
     public preload(): void {
 
     }
 
     public init(): void {
 
-        this.keyboard = this.gameInstance.keyboardInput
-
-        this.camera = new Camera(3.5, 3.5, 0)
-
         const minimap = new Minimap(this.map, this.camera)
-
         this.add(minimap)
     }
 
