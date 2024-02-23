@@ -1,5 +1,6 @@
 export class Clock {
 
+    private _time: number = 0
     private fpsCounter: number = 0
     private previousTime: number = 0
     private previousFpsTime: number = 0
@@ -7,6 +8,7 @@ export class Clock {
     private _fps: number = 0
     private _updateFps: boolean = false
 
+    public get time() { return this._time }
     public get deltaTime() { return this._deltaTime }
     public get updateFps() { return this._updateFps }
     public get fps() {
@@ -17,6 +19,7 @@ export class Clock {
 
     public tick(currentTime: number): void {
 
+        this._time = currentTime
         this.fpsCounter++;
 
         this._deltaTime = (currentTime - this.previousTime) * 0.001;
