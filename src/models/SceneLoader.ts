@@ -1,13 +1,16 @@
-import { MapUtils } from "../utils/Map.utils";
-import { TextureUtils } from "../utils/Texture.utils";
-import { Color } from "./Color";
-import { Map } from "./Map";
-import { Texture } from "./Texture";
+import { TextStyle } from "../interfaces/TextStyle"
+import { MapUtils } from "../utils/Map.utils"
+import { TextureUtils } from "../utils/Texture.utils"
+import { Color } from "./Color"
+import { Map } from "./Map"
+import { Texture } from "./Texture"
+import { Text } from "../objects/Text"
 
 enum LoadType {
     MAP,
     TEXTURE,
     COLOR_TEXTURE,
+    TEXT,
     DELAY,
 }
 
@@ -17,6 +20,7 @@ export class SceneLoader {
     private _loadList = new Array<any>()
     private _textures = new Array<Texture>()
     private _map: Map = new Map()
+    private _texts = new Array<Text>()
 
     public get loading() { return this._loading }
 
@@ -32,6 +36,11 @@ export class SceneLoader {
         return this._map
     }
 
+    public getText(name: string): Text | null {
+
+        return this._texts.find(t => t.name === name) || null
+    }
+
     public map(path: string): void {
 
         this._loadList.push({ type: LoadType.MAP, path })
@@ -45,6 +54,11 @@ export class SceneLoader {
     public colorTexture(name: string, color: Color): void {
 
         this._loadList.push({ type: LoadType.COLOR_TEXTURE, name, color })
+    }
+
+    public text(name: string, text: string, style: TextStyle): void {
+
+        this._loadList.push({ type: LoadType.TEXT, name, text, style })
     }
 
     public delay(milliseconds: number): void {
@@ -72,6 +86,10 @@ export class SceneLoader {
                     promises.push(this.loadColorTexture(item.name, item.color))
                     break
 
+                case LoadType.TEXT:
+                    promises.push(this.loadText(item.name, item.text, item.style))
+                    break
+
                 case LoadType.DELAY:
                     promises.push(new Promise(resolve => setTimeout(resolve, item.milliseconds)))
                     break
@@ -89,6 +107,10 @@ export class SceneLoader {
             else if (item instanceof Texture) {
 
                 this._textures.push(item)
+            }
+            else if (item instanceof Text) {
+
+                this._texts.push(item)
             }
         }
     }
@@ -122,5 +144,14 @@ export class SceneLoader {
     private async loadColorTexture(name: string, color: Color): Promise<Texture> {
 
         return new Promise(resolve => resolve(TextureUtils.fromColor(color, name)))
+    }
+
+    private async loadText(name: string, text: string, style: TextStyle): Promise<Text> {
+
+        return new Promise(async resolve => {
+            
+            const texture = await TextureUtils.createTextTexture(name, text, style)
+            resolve(new Text(name, 0, 0, texture))
+        })
     }
 }
