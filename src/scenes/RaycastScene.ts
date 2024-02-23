@@ -28,7 +28,7 @@ export class RaycastScene extends Scene {
 
     protected wallDistanceShade = (distance: number): number => 1.0 - distance * 0.1
 
-    public async preload(): Promise<void> {
+    public preload(): void {
 
     }
 

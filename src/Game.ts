@@ -85,7 +85,7 @@ export class Game {
         this._currentScene = new sceneType(this)
 
         // TODO: show loading
-        await this._currentScene.preload()
+        this._currentScene.preload()
         this._currentScene.init()
         // TODO: hide loading
     }

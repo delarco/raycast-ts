@@ -12,13 +12,9 @@ export class Scene {
         this.objects = []
     }
 
-    public async preload(): Promise<void> {
+    public preload(): void { }
 
-    }
-
-    public init(): void {
-
-    }
+    public init(): void { }
 
     public update(clock: Clock): void {
 
