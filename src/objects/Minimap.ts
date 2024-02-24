@@ -7,8 +7,7 @@ import { Vec2D } from "../models/Vec2D";
 
 export class Minimap extends GameObject {
 
-    private tileSize: number
-    private tileColor = new Color(100, 100, 100)
+    private tileSize: number = 0
 
     constructor(private map: Map, private camera: Camera) {
         super()
@@ -45,7 +44,7 @@ export class Minimap extends GameObject {
                         this.y + row * this.tileSize,
                         this.tileSize,
                         this.tileSize,
-                        this.tileColor
+                        tile.minimap
                     )
                 }
             }
