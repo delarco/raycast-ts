@@ -1,19 +1,18 @@
-import { Renderer } from "../interfaces/Renderer";
+import { Renderer } from "../interfaces/Renderer"
 import { Scene } from "../models/Scene"
-import { Map } from "../models/Map";
-import { Minimap } from "../objects/Minimap";
-import { Color } from "../models/Color";
-import { Camera } from "../models/Camera";
-import { Vec2D } from "../models/Vec2D";
-import { Side } from "../enums/Side";
-import { TileHit } from "../interfaces/TileHit";
-import { VectorUtils } from "../utils/Vector.utils";
-import { Size } from "../interfaces/Size";
-import { Clock } from "../utils/Clock";
-import { KEYS, KeyboardInput } from "../input/Keyboard.input";
-import { Texture } from "../models/Texture";
-import { Sprite } from "../models/Sprite";
-import { Game } from "../Game";
+import { Map } from "../models/Map"
+import { Minimap } from "../objects/Minimap"
+import { Color } from "../models/Color"
+import { Camera } from "../models/Camera"
+import { Vec2D } from "../models/Vec2D"
+import { Side } from "../enums/Side"
+import { TileHit } from "../interfaces/TileHit"
+import { VectorUtils } from "../utils/Vector.utils"
+import { Size } from "../interfaces/Size"
+import { Clock } from "../utils/Clock"
+import { KEYS, KeyboardInput } from "../input/Keyboard.input"
+import { Sprite } from "../models/Sprite"
+import { Game } from "../Game"
 
 export class RaycastScene extends Scene {
 
@@ -22,9 +21,7 @@ export class RaycastScene extends Scene {
     protected keyboard: KeyboardInput | null = null
 
     protected ambientLight = 1.0
-    protected skybox: Texture | Color = Color.DARK_BLUE
-    protected floor: Texture | Color = Color.DARK_GREEN
-
+    
     protected sprites: Array<Sprite> = []
 
     protected distanceShade = (distance: number): number => 1.0 - distance * 0.1
@@ -214,13 +211,13 @@ export class RaycastScene extends Scene {
 
                     if (!pixelColor) {
 
-                        if (this.floor instanceof Color) {
+                        if (this.map.floor instanceof Color) {
 
-                            pixelColor = this.floor
+                            pixelColor = this.map.floor
                         }
                         else {
 
-                            pixelColor = this.floor.sampleColor(tex.x, tex.y)
+                            pixelColor = this.map.floor.sampleColor(tex.x, tex.y)
                         }
 
                     }
@@ -453,11 +450,11 @@ export class RaycastScene extends Scene {
 
     private getSkyboxColor(rayAngle: number, y: number): Color {
 
-        if (this.skybox instanceof Color) return this.skybox
+        if (this.map.skybox instanceof Color) return this.map.skybox
 
         let tx = rayAngle * (1 / (2 * Math.PI)) % 1
         if (tx < 0) tx = 1 + tx
         const ty = y / (this.gameInstance.resolution.height - 1)
-        return this.skybox.sampleColor(tx, ty)
+        return this.map.skybox.sampleColor(tx, ty)
     }
 }

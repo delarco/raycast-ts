@@ -1,10 +1,14 @@
 import { Size } from "../interfaces/Size"
+import { Color } from "./Color"
+import { Texture } from "./Texture"
 import { Tile } from "./Tile"
 
 export class Map {
 
     public tiles: Array<Tile> = []
     public size: Size = { width: 0, height: 0 }
+    public skybox: Texture | Color = Color.LIGHT_BLUE
+    public floor: Texture | Color = Color.LIGHT_GREEN
 
     public getTile(x: number, y: number): Tile | null {
 
