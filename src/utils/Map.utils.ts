@@ -57,12 +57,25 @@ export class MapUtils {
             // regex for ARGB: ^#(?:[0-9a-fA-F]{3,4}){1,2}$
             if (/^#(?:[0-9a-fA-F]{3}){1,2}$$/.test(ct)) {
 
-                const n = Number("0x" + ct.substring(1, 7))
-                const r = (n & 0xFF0000) >> 16
-                const g = (n & 0x00FF00) << 8 >> 16
-                const b = (n & 0x0000FF)
+                if (ct.length === 4) {
+                    const n = Number("0x" + ct.substring(1, 7))
+                    let r = (n & 0xF00) >> 8
+                    r = (r << 4) + r
+                    let g = (n & 0x0F0) << 4 >> 8
+                    g = (g << 4) + g
+                    let b = (n & 0x00F)
+                    b = (b << 4) + b
 
-                return new Color(r, g, b)
+                    return new Color(r, g, b)
+                }
+                else {
+
+                    const n = Number("0x" + ct.substring(1, 7))
+                    const r = (n & 0xFF0000) >> 16
+                    const g = (n & 0x00FF00) << 8 >> 16
+                    const b = (n & 0x0000FF)
+                    return new Color(r, g, b)
+                }
             }
 
             return ct
@@ -105,7 +118,7 @@ export class MapUtils {
                         let jsonMinimap = colorOrTexture(jsonTile.minimap)
                         let minimap: Color | null = null
 
-                        if(jsonMinimap instanceof Color) {
+                        if (jsonMinimap instanceof Color) {
                             minimap = jsonMinimap
                         }
                         else {
