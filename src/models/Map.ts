@@ -2,13 +2,16 @@ import { Size } from "../interfaces/Size"
 import { Color } from "./Color"
 import { Texture } from "./Texture"
 import { Tile } from "./Tile"
+import { Vec2D } from "./Vec2D"
 
 export class Map {
 
+    public name: string = "Unnamed Map"
     public tiles: Array<Tile> = []
     public size: Size = { width: 0, height: 0 }
     public skybox: Texture | Color = Color.LIGHT_BLUE
     public floor: Texture | Color = Color.LIGHT_GREEN
+    public spawn = new Vec2D(0, 0)
 
     public getTile(x: number, y: number): Tile | null {
 
