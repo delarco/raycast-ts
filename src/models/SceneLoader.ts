@@ -5,9 +5,12 @@ import { Color } from "./Color"
 import { Map } from "./Map"
 import { Texture } from "./Texture"
 import { Text } from "../objects/Text"
+import { RaycastScene, Size } from "../.."
+import { Scene } from "./Scene"
 
 enum LoadType {
     MAP,
+    MAP_ARRAY,
     TEXTURE,
     COLOR_TEXTURE,
     TEXT,
@@ -24,7 +27,7 @@ export class SceneLoader {
 
     public get loading() { return this._loading }
 
-    constructor() { }
+    constructor(private scene: Scene) { }
 
     public getTexture(name: string): Texture | null {
 
@@ -46,6 +49,11 @@ export class SceneLoader {
         this._loadList.push({ type: LoadType.MAP, path })
     }
 
+    public mapFromIntArray(array: Array<number>, size: Size, wallColors?: { [key: number]: Color }): void {
+
+        this._loadList.push({ type: LoadType.MAP_ARRAY, array, size, wallColors })
+    }
+
     public texture(name: string, path: string): void {
 
         this._loadList.push({ type: LoadType.TEXTURE, name, path })
@@ -60,7 +68,7 @@ export class SceneLoader {
 
         this._loadList.push({ type: LoadType.TEXT, name, text, style })
     }
-
+    
     public delay(milliseconds: number): void {
 
         this._loadList.push({ type: LoadType.DELAY, milliseconds })
@@ -76,6 +84,10 @@ export class SceneLoader {
 
                 case LoadType.MAP:
                     promises.push(this.loadMap(item.path))
+                    break
+
+                case LoadType.MAP_ARRAY:
+                    promises.push(this.loadMapArray(item.array, item.size, item.wallColors))
                     break
 
                 case LoadType.TEXTURE:
@@ -103,6 +115,8 @@ export class SceneLoader {
             if (item instanceof Map) {
 
                 this._map = item
+
+                if(this.scene instanceof RaycastScene) this.scene.map = item
             }
             else if (item instanceof Texture) {
 
@@ -120,6 +134,11 @@ export class SceneLoader {
         return MapUtils.fromJson(path)
     }
 
+    private async loadMapArray(array: Array<number>, size: Size, wallColors?: { [key: number]: Color }): Promise<Map> {
+
+        return MapUtils.fromIntArray(array, size, wallColors)
+    }
+
     private async loadTexture(name: string, path: string): Promise<Texture> {
 
         return TextureUtils.fromFile(name, path)
@@ -133,7 +152,7 @@ export class SceneLoader {
     private async loadText(name: string, text: string, style: TextStyle): Promise<Text> {
 
         return new Promise(async resolve => {
-            
+
             const texture = await TextureUtils.createTextTexture(name, text, style)
             resolve(new Text(name, 0, 0, texture))
         })

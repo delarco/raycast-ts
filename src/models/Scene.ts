@@ -12,7 +12,7 @@ export class Scene {
     constructor(public gameInstance: Game) {
 
         this.objects = []
-        this.load = new SceneLoader()
+        this.load = new SceneLoader(this)
     }
 
     public preload(): void { }

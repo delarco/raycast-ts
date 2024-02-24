@@ -16,7 +16,7 @@ import { Game } from "../Game"
 
 export class RaycastScene extends Scene {
 
-    protected map: Map = new Map()
+    public map: Map = new Map()
     protected camera: Camera = new Camera(0, 0, 0)
     protected keyboard: KeyboardInput | null = null
 
