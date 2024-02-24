@@ -15,7 +15,10 @@ enum LoadType {
     COLOR_TEXTURE,
     TEXT,
     DELAY,
+    SKY,
 }
+
+type LoadResult = { type: LoadType, value: any }
 
 export class SceneLoader {
 
@@ -68,10 +71,15 @@ export class SceneLoader {
 
         this._loadList.push({ type: LoadType.TEXT, name, text, style })
     }
-    
+
     public delay(milliseconds: number): void {
 
         this._loadList.push({ type: LoadType.DELAY, milliseconds })
+    }
+
+    public sky(sky: Color | string): void {
+
+        this._loadList.push({ type: LoadType.SKY, sky })
     }
 
     public async load(): Promise<void> {
@@ -105,56 +113,96 @@ export class SceneLoader {
                 case LoadType.DELAY:
                     promises.push(new Promise(resolve => setTimeout(resolve, item.milliseconds)))
                     break
+
+                case LoadType.SKY:
+                    promises.push(this.loadSky(item.sky))
+                    break
             }
         }
 
-        const results = await Promise.all(promises)
+        const results = await Promise.all(promises) as Array<LoadResult>
+        let sky: Color | Texture | null = null
 
         for (const item of results) {
 
-            if (item instanceof Map) {
+            switch ((item as LoadResult).type) {
 
-                this._map = item
+                case LoadType.MAP:
+                case LoadType.MAP_ARRAY:
+                    this._map = item.value
+                    break
 
-                if(this.scene instanceof RaycastScene) this.scene.setMap(item)
-            }
-            else if (item instanceof Texture) {
+                case LoadType.TEXTURE:
+                    this._textures.push(item.value)
+                    break
 
-                this._textures.push(item)
-            }
-            else if (item instanceof Text) {
+                case LoadType.TEXT:
+                    this._texts.push(item.value)
+                    break
 
-                this._texts.push(item)
+                case LoadType.SKY:
+                    sky = item.value
+                    break
             }
         }
+
+        if (sky) this._map.skybox = sky
+
+        if (this.scene instanceof RaycastScene) this.scene.setMap(this._map)
     }
 
-    private async loadMap(path: string): Promise<Map> {
+    private async loadMap(path: string): Promise<{ type: LoadType, value: Map }> {
 
-        return MapUtils.fromJson(path)
+        return new Promise(async resolve => resolve({
+            type: LoadType.MAP,
+            value: await MapUtils.fromJson(path)
+        }))
     }
 
-    private async loadMapArray(array: Array<number>, size: Size, wallColors?: { [key: number]: Color }): Promise<Map> {
+    private async loadMapArray(array: Array<number>, size: Size, wallColors?: { [key: number]: Color }): Promise<{ type: LoadType, value: Map }> {
 
-        return MapUtils.fromIntArray(array, size, wallColors)
+        return new Promise(async resolve => resolve({
+            type: LoadType.MAP,
+            value: await MapUtils.fromIntArray(array, size, wallColors)
+        }))
     }
 
-    private async loadTexture(name: string, path: string): Promise<Texture> {
+    private async loadTexture(name: string, path: string): Promise<{ type: LoadType, value: Texture }> {
 
-        return TextureUtils.fromFile(name, path)
+        return new Promise(async resolve => resolve({
+            type: LoadType.TEXTURE,
+            value: await TextureUtils.fromFile(name, path)
+        }))
     }
 
-    private async loadColorTexture(name: string, color: Color): Promise<Texture> {
-
-        return new Promise(resolve => resolve(TextureUtils.fromColor(color, name)))
+    private async loadColorTexture(name: string, color: Color): Promise<{ type: LoadType, value: Texture }> {
+        return new Promise(async resolve => resolve({
+            type: LoadType.TEXTURE,
+            value: await TextureUtils.fromColor(color, name)
+        }))
     }
 
-    private async loadText(name: string, text: string, style: TextStyle): Promise<Text> {
+    private async loadText(name: string, text: string, style: TextStyle): Promise<{ type: LoadType, value: Text }> {
+        return new Promise(async resolve => resolve({
+            type: LoadType.TEXT,
+            value: new Text(name, 0, 0, await TextureUtils.createTextTexture(name, text, style))
+        }))
+    }
 
-        return new Promise(async resolve => {
+    private async loadSky(sky: Color | string): Promise<{ type: LoadType, value: Color | Texture }> {
 
-            const texture = await TextureUtils.createTextTexture(name, text, style)
-            resolve(new Text(name, 0, 0, texture))
-        })
+        if (sky instanceof Color) {
+
+            return new Promise(resolve => resolve({ type: LoadType.SKY, value: sky }))
+        }
+        else {
+
+            return new Promise(async resolve => {
+
+                const texture = await TextureUtils.fromFile("SKY_TEXTURE", sky)
+                resolve({ type: LoadType.SKY, value: texture })
+            })
+
+        }
     }
 }
