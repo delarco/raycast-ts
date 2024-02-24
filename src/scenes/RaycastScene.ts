@@ -219,8 +219,9 @@ export class RaycastScene extends Scene {
 
                             pixelColor = this.map.floor.sampleColor(tex.x, tex.y)
                         }
-
                     }
+
+                    shade = this.distanceShade(planeZ)
                 }
 
                 if (!pixelColor) pixelColor = Color.BLACK
