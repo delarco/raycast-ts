@@ -8,17 +8,34 @@ import { Texture } from "../models/Texture";
 
 export class MapUtils {
 
-    public static fromIntArray(array: Array<number>, size: Size): Map {
+    public static async fromIntArray(array: Array<number>, size: Size, wallColors?: { [key: number]: Color }): Promise<Map> {
 
         const map = new Map()
         map.size = size
 
+        const defaultWallTexture = TextureUtils.fromColor(Color.WHITE)
+        let wallTextures: { [key: number]: Texture } = {}
+
+        if (wallColors) {
+            for (const key of Object.keys(wallColors).map(k => Number(k))) {
+                wallTextures[key] = TextureUtils.fromColor(wallColors[key])
+            }
+        }
+
         for (let y = 0; y < map.size.width; y++) {
             for (let x = 0; x < map.size.width; x++) {
+
+                const n = array[y * size.width + x]
+                let wallTexture = defaultWallTexture
+
+                if (n > 0 && n in wallTextures) {
+                    wallTexture = wallTextures[n]
+                }
+
                 map.tiles.push(new Tile(
                     new Vec2D(x, y),
-                    array[y * size.width + x] === 1,
-                    TextureUtils.fromColor(Color.WHITE),
+                    n > 0,
+                    wallTexture,
                     null
                 ))
             }
