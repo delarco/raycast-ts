@@ -117,23 +117,7 @@ export class SceneLoader {
 
     private async loadMap(path: string): Promise<Map> {
 
-        path
-
-        return MapUtils.fromIntArray(
-            [
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                1, 1, 1, 1, 0, 0, 0, 0, 0, 1,
-                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                1, 0, 0, 1, 1, 1, 0, 0, 0, 1,
-                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                1, 0, 0, 0, 0, 1, 1, 1, 0, 1,
-                1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
-                1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
-            ],
-            { width: 10, height: 10 }
-        )
+        return MapUtils.fromJson(path)
     }
 
     private async loadTexture(name: string, path: string): Promise<Texture> {
