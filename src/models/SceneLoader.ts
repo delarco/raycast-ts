@@ -116,7 +116,7 @@ export class SceneLoader {
 
                 this._map = item
 
-                if(this.scene instanceof RaycastScene) this.scene.map = item
+                if(this.scene instanceof RaycastScene) this.scene.setMap(item)
             }
             else if (item instanceof Texture) {
 

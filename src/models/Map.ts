@@ -11,7 +11,7 @@ export class Map {
     public size: Size = { width: 0, height: 0 }
     public skybox: Texture | Color = Color.LIGHT_BLUE
     public floor: Texture | Color = Color.LIGHT_GREEN
-    public spawn = new Vec2D(0, 0)
+    public spawn = new Array<Vec2D>(new Vec2D(0, 0))
 
     public getTile(x: number, y: number): Tile | null {
 
@@ -27,5 +27,11 @@ export class Map {
         if (y < 0 || y >= this.size.height) return false
 
         return this.tiles[y * this.size.width + x].solid
+    }
+
+    public getRandomSpawnLocation(): Vec2D {
+
+        const location = this.spawn[Math.floor(Math.random() * this.spawn.length)];
+        return location;
     }
 }

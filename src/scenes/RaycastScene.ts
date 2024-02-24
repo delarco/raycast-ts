@@ -16,7 +16,7 @@ import { Game } from "../Game"
 
 export class RaycastScene extends Scene {
 
-    public map: Map = new Map()
+    protected map: Map = new Map()
     protected camera: Camera = new Camera(0, 0, 0)
     protected keyboard: KeyboardInput | null = null
 
@@ -29,6 +29,14 @@ export class RaycastScene extends Scene {
     constructor(public gameInstance: Game) {
         super(gameInstance)
         this.keyboard = this.gameInstance.keyboardInput
+    }
+
+    public setMap(map: Map) {
+
+        this.map = map
+
+        const spawn = map.getRandomSpawnLocation()
+        this.camera = new Camera(spawn.x, spawn.y)
     }
 
     public preload(): void {
