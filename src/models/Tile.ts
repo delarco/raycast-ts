@@ -14,6 +14,7 @@ export class Tile {
         public solid: boolean,
         texture: { [key in Side]: Texture | null } | Texture | null,
         detail: { [key in Side]: Texture | null } | Texture | null,
+        public minimap = Color.INDIGO
     ) {
 
         if (!texture) {
