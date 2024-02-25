@@ -13,12 +13,15 @@ export class Map {
     public floor: Texture | Color = Color.LIGHT_GREEN
     public spawn = new Array<Vec2D>(new Vec2D(0, 0))
 
+    public get width() { return this.size.width }
+    public get height() { return this.size.height }
+
     public getTile(x: number, y: number): Tile | null {
 
         if (x < 0 || x >= this.size.width) return null
         if (y < 0 || y >= this.size.height) return null
 
-        return this.tiles[x + (y * this.size.width)]
+        return this.tiles[~~x + (~~y * this.size.width)]
     }
 
     public isLocationSolid(x: number, y: number): boolean {
@@ -26,7 +29,7 @@ export class Map {
         if (x < 0 || x >= this.size.width) return false
         if (y < 0 || y >= this.size.height) return false
 
-        return this.tiles[y * this.size.width + x].solid
+        return this.tiles[~~y * this.size.width + ~~x].solid
     }
 
     public getRandomSpawnLocation(): Vec2D {
