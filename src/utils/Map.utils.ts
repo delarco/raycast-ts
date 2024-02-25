@@ -49,6 +49,27 @@ export class MapUtils {
     // TODO: implement toJson
     public static toJson(map: Map): object {
 
+        const convertTexture = (tile: Tile) => {
+
+            let tex: any = {
+                north: null,
+                south: null,
+                west: null,
+                east: null,
+                top: tile.texture[Side.TOP]?.name,
+                bottom: tile.texture[Side.BOTTOM]?.name,
+            }
+
+            if (tile.solid) {
+                tex.north = tile.texture[Side.NORTH]?.name
+                tex.south = tile.texture[Side.SOUTH]?.name
+                tex.west = tile.texture[Side.WEST]?.name
+                tex.east = tile.texture[Side.EAST]?.name
+            }
+
+            return tex
+        }
+
         return {
             name: "Map Name",
             size: map.size,
@@ -59,9 +80,9 @@ export class MapUtils {
                 return {
                     position: tile.position,
                     solid: tile.solid,
-                    texture: tile.solid ? "#EEE" : null,
-                    details: null,
-                    minimap: "#AAF"
+                    texture: convertTexture(tile),
+                    // details: tile.detail,
+                    minimap: tile.minimap.cssHex
                 }
             })
         }
@@ -98,11 +119,40 @@ export class MapUtils {
 
                     const side = Color.fromHex(jsonTexture[sideName])
                     if (side instanceof Color) texture[sideKey] = TextureUtils.fromColor(side)
-                    if (!texture[sideKey]) texture[sideKey] = await TextureUtils.fromFile("MAP_WALL_TEX", jsonTexture[sideName])
+                    if (!texture[sideKey]) texture[sideKey] = await TextureUtils.fromFile(jsonTexture[sideName], jsonTexture[sideName])
                 }
             }
 
             return texture
+        }
+
+        const sideDetail = async (jsonDetail: any): Promise<{ [key in Side]: Texture | null }> => {
+
+            let detail: { [key in Side]: Texture | null } = {
+                [Side.NORTH]: null,
+                [Side.SOUTH]: null,
+                [Side.WEST]: null,
+                [Side.EAST]: null,
+                [Side.TOP]: null,
+                [Side.BOTTOM]: null,
+            }
+
+            const sideNameMap: { [key: number]: string } = { 0: "north", 1: "south", 2: "west", 3: "east", 4: "top", 5: "bottom" }
+
+            for (const key of Object.keys(Side)) {
+
+                const sideKey = <Side>Number(key)
+                const sideName = sideNameMap[Number(key)]
+
+                if (sideName in jsonDetail && jsonDetail[sideName]) {
+
+                    const side = Color.fromHex(jsonDetail[sideName])
+                    if (side instanceof Color) detail[sideKey] = TextureUtils.fromColor(side)
+                    if (!detail[sideKey]) detail[sideKey] = await TextureUtils.fromFile(jsonDetail[sideName], jsonDetail[sideName])
+                }
+            }
+
+            return detail
         }
 
         return new Promise<Map>(async (resolve, reject) => {
@@ -126,6 +176,7 @@ export class MapUtils {
                     for (const jsonTile of jsonMap.tiles) {
 
                         let texture: { [key in Side]: Texture | null } | Texture | null = null
+                        let detail: { [key in Side]: Texture | null } | Texture | null = null
 
                         // no texture
                         if (!jsonTile.texture) {
@@ -148,6 +199,16 @@ export class MapUtils {
                             texture = await sideTexture(jsonTile.texture)
                         }
 
+                        // sides detail
+                        if (typeof (jsonTile.detail) === "object") {
+                            console.log(jsonTile);
+                            
+                            detail = await sideDetail(jsonTile.detail)
+
+                            console.log(detail[Side.WEST]);
+                            
+                        }
+
                         let minimap = Color.fromHex(jsonTile.minimap)
                         if (!minimap) minimap = Color.INDIGO
 
@@ -159,12 +220,16 @@ export class MapUtils {
                             jsonTile.solid,
                             collision,
                             texture,
-                            null,
+                            detail,
                             minimap
                         )
 
                         map.tiles.push(tile)
                     }
+
+                    const testTile = map.getTile(5, 14)
+                    console.log(testTile);
+                    
 
                     resolve(map)
                 })
