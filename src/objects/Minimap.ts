@@ -4,10 +4,12 @@ import { Color } from "../models/Color";
 import { GameObject } from "../models/GameObject";
 import { Map } from "../models/Map";
 import { Vec2D } from "../models/Vec2D";
+import { MinimapMarker } from "../models/MinimapMarker";
 
 export class Minimap extends GameObject {
 
     private tileSize: number = 0
+    public markers: Array<MinimapMarker> = []
 
     constructor(private map: Map, private camera: Camera) {
         super()
@@ -28,6 +30,7 @@ export class Minimap extends GameObject {
 
         this.drawTiles(renderer)
         this.drawCamera(renderer)
+        this.drawMarkers(renderer)
     }
 
     private drawTiles(renderer: Renderer): void {
@@ -79,5 +82,27 @@ export class Minimap extends GameObject {
             pointerDest.y,
             Color.RED
         )
+    }
+
+    private drawMarkers(renderer: Renderer): void {
+
+        const markerSize = 2
+        const halfMarkerSize = 1
+
+        for (const marker of this.markers) {
+
+            const pos = new Vec2D(
+                this.x + marker.x * this.tileSize,
+                this.y + marker.y * this.tileSize,
+            )
+
+            renderer.drawRect(
+                pos.x - halfMarkerSize,
+                pos.y - halfMarkerSize,
+                markerSize,
+                markerSize,
+                marker.color
+            )
+        }
     }
 }
