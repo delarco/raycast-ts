@@ -11,7 +11,7 @@ import { VectorUtils } from "../utils/Vector.utils"
 import { Size } from "../interfaces/Size"
 import { Clock } from "../utils/Clock"
 import { KEYS, KeyboardInput } from "../input/Keyboard.input"
-import { Sprite } from "../models/Sprite"
+import { Sprite } from "../objects/Sprite"
 import { Game } from "../Game"
 
 export class RaycastScene extends Scene {
@@ -46,7 +46,7 @@ export class RaycastScene extends Scene {
     public init(): void {
 
         const minimap = new Minimap(this.map, this.camera)
-        this.add(minimap)
+        this.add.object(minimap)
     }
 
     public override update(clock: Clock): void {
