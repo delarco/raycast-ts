@@ -69,7 +69,6 @@ export class Game {
         this._renderer = new OffscreenImageDataRenderer2D(this._canvas.transferControlToOffscreen())
 
         this._resolution = config.resolution
-        console.log(`[Worker] resolution ${this.resolution.width}x${this.resolution.height}`)
         TextureUtils.init(this.resolution)
 
         this._keyboardInput = new KeyboardInput()
