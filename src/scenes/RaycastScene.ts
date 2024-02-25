@@ -115,8 +115,8 @@ export class RaycastScene extends Scene {
         const tileX = this.map.getTile(newPosition.x, this.camera.y)
         const tileY = this.map.getTile(this.camera.x, newPosition.y)
 
-        if (!tileX?.solid && newPosition.x > 0 && newPosition.x < this.map.width) this.camera.x = newPosition.x
-        if (!tileY?.solid && newPosition.y > 0 && newPosition.y < this.map.height) this.camera.y = newPosition.y
+        if (!tileX?.collision && newPosition.x > 0 && newPosition.x < this.map.width) this.camera.x = newPosition.x
+        if (!tileY?.collision && newPosition.y > 0 && newPosition.y < this.map.height) this.camera.y = newPosition.y
     }
 
     public override draw(renderer: Renderer): void {

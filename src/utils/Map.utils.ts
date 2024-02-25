@@ -35,6 +35,7 @@ export class MapUtils {
                 map.tiles.push(new Tile(
                     new Vec2D(x, y),
                     n > 0,
+                    n > 0,
                     wallTexture,
                     null
                 ))
@@ -142,9 +143,14 @@ export class MapUtils {
                             minimap = Color.INDIGO
                         }
 
+                        let collision = jsonTile.solid
+
+                        if("collision" in jsonTile) collision = jsonTile.collision
+
                         const tile = new Tile(
                             jsonTile.position,
                             jsonTile.solid,
+                            collision,
                             texture,
                             null,
                             minimap
