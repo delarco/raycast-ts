@@ -5,6 +5,7 @@ import { TextureUtils } from "./Texture.utils";
 import { Tile } from "../models/Tile";
 import { Vec2D } from "../models/Vec2D";
 import { Texture } from "../models/Texture";
+import { Side } from "../..";
 
 export class MapUtils {
 
@@ -70,41 +71,46 @@ export class MapUtils {
 
         const colorOrTexture = (ct: string | null): Color | string | null => {
 
-            if (!ct) return null
-
-            // regex for ARGB: ^#(?:[0-9a-fA-F]{3,4}){1,2}$
-            if (/^#(?:[0-9a-fA-F]{3}){1,2}$$/.test(ct)) {
-
-                if (ct.length === 4) {
-                    const n = Number("0x" + ct.substring(1, 7))
-                    let r = (n & 0xF00) >> 8
-                    r = (r << 4) + r
-                    let g = (n & 0x0F0) << 4 >> 8
-                    g = (g << 4) + g
-                    let b = (n & 0x00F)
-                    b = (b << 4) + b
-
-                    return new Color(r, g, b)
-                }
-                else {
-
-                    const n = Number("0x" + ct.substring(1, 7))
-                    const r = (n & 0xFF0000) >> 16
-                    const g = (n & 0x00FF00) << 8 >> 16
-                    const b = (n & 0x0000FF)
-                    return new Color(r, g, b)
-                }
-            }
-
+            let color = Color.fromHex(ct)
+            if (color) return color
             return ct
         }
 
-        return new Promise<Map>((resolve, reject) => {
+        const sideTexture = async (jsonTexture: any): Promise<{ [key in Side]: Texture | null }> => {
+
+            let texture: { [key in Side]: Texture | null } = {
+                [Side.NORTH]: null,
+                [Side.SOUTH]: null,
+                [Side.WEST]: null,
+                [Side.EAST]: null,
+                [Side.TOP]: null,
+                [Side.BOTTOM]: null,
+            }
+
+            const sideNameMap: { [key: number]: string } = { 0: "north", 1: "south", 2: "west", 3: "east", 4: "top", 5: "bottom" }
+
+            for (const key of Object.keys(Side)) {
+
+                const sideKey = <Side>Number(key)
+                const sideName = sideNameMap[Number(key)]
+
+                if (sideName in jsonTexture && jsonTexture[sideName]) {
+
+                    const side = Color.fromHex(jsonTexture[sideName])
+                    if (side instanceof Color) texture[sideKey] = TextureUtils.fromColor(side)
+                    if (!texture[sideKey]) texture[sideKey] = await TextureUtils.fromFile("MAP_WALL_TEX", jsonTexture[sideName])
+                }
+            }
+
+            return texture
+        }
+
+        return new Promise<Map>(async (resolve, reject) => {
 
             fetch(path)
                 .then(data => data.json())
                 // TODO: validade json
-                .then(jsonMap => {
+                .then(async jsonMap => {
 
                     const map = new Map()
                     map.size = jsonMap.size
@@ -119,33 +125,34 @@ export class MapUtils {
 
                     for (const jsonTile of jsonMap.tiles) {
 
-                        let jsonTexture = colorOrTexture(jsonTile.texture)
-                        let texture: Texture | null = null
+                        let texture: { [key in Side]: Texture | null } | Texture | null = null
 
-                        if (texture) {
-
-                            if (jsonTexture instanceof Color) {
-                                texture = TextureUtils.fromColor(texture)
-                            }
-                            else {
-                                // TODO: implement texture load for map
-                                texture = null
-                            }
+                        // no texture
+                        if (!jsonTile.texture) {
+                            texture = TextureUtils.fromColor(Color.INDIGO)
                         }
 
-                        let jsonMinimap = colorOrTexture(jsonTile.minimap)
-                        let minimap: Color | null = null
+                        // color texture
+                        else if (typeof (jsonTile.texture) === "string") {
+                            const color = Color.fromHex(jsonTile.texture)
+                            if (color) texture = TextureUtils.fromColor(color)
+                        }
 
-                        if (jsonMinimap instanceof Color) {
-                            minimap = jsonMinimap
+                        // file texture
+                        else if (typeof (jsonTile.texture) === "string") {
+                            texture = await TextureUtils.fromFile("MAP_WALL_TEX", jsonTile.texture)
                         }
-                        else {
-                            minimap = Color.INDIGO
+
+                        // sides texture
+                        else if (typeof (jsonTile.texture) === "object") {
+                            texture = await sideTexture(jsonTile.texture)
                         }
+
+                        let minimap = Color.fromHex(jsonTile.minimap)
+                        if (!minimap) minimap = Color.INDIGO
 
                         let collision = jsonTile.solid
-
-                        if("collision" in jsonTile) collision = jsonTile.collision
+                        if ("collision" in jsonTile) collision = jsonTile.collision
 
                         const tile = new Tile(
                             jsonTile.position,
