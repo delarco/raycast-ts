@@ -5,6 +5,7 @@ import { TextStyle } from "../interfaces/TextStyle"
 
 export class TextureUtils {
 
+    private static textures: { [key: string]: Texture } = {}
     private static resolution: Size
     private static offscrenCanvas: OffscreenCanvas
     private static textContext: OffscreenCanvasRenderingContext2D
@@ -17,6 +18,11 @@ export class TextureUtils {
         const context = TextureUtils.offscrenCanvas.getContext("2d")
         if (!context) throw new Error("Can't create get OffscreenCanvas context")
         TextureUtils.textContext = context
+    }
+
+    public static getTexture(name: string): Texture | null {
+
+        return TextureUtils.textures[name] || null
     }
 
     public static drawDebugBorders(texture: Texture): void {
@@ -41,12 +47,18 @@ export class TextureUtils {
 
         const texture = new Texture(name, size, size, [...new Array(size * size).keys()].map(() => color))
         if (debugBorders) TextureUtils.drawDebugBorders(texture)
+        TextureUtils.textures[name] = texture
         return texture
     }
 
     public static fromFile(name: string, filepath: string, debugBorders = false): Promise<Texture> {
 
         return new Promise((resolve, reject) => {
+
+            if(name in TextureUtils.textures) {
+                resolve(TextureUtils.textures[name])
+                return
+            }
 
             fetch(filepath)
                 .then(async result => {
@@ -95,7 +107,10 @@ export class TextureUtils {
 
                     if (debugBorders) TextureUtils.drawDebugBorders(texture)
 
-                    if (texture) return resolve(texture)
+                    if (texture) {
+                        TextureUtils.textures[name] = texture
+                        return resolve(texture)
+                    }
                     throw new Error("Error loading texture.")
                 })
                 .catch(error => {
@@ -141,10 +156,12 @@ export class TextureUtils {
             }
         }
 
-        const texture = new Texture('skybox-night', width, height, data);
+        const name = 'skybox-night'
+        const texture = new Texture(name, width, height, data);
 
         if (debugBorders) TextureUtils.drawDebugBorders(texture)
 
+        TextureUtils.textures[name] = texture
         return texture;
     }
 
@@ -181,10 +198,12 @@ export class TextureUtils {
             }
         }
 
-        const texture = new Texture('skybox-day', width, height, data)
+        const name = 'skybox-day'
+        const texture = new Texture(name, width, height, data)
 
         if (debugBorders) TextureUtils.drawDebugBorders(texture)
 
+        TextureUtils.textures[name] = texture
         return texture
     }
 
@@ -215,10 +234,12 @@ export class TextureUtils {
             }
         }
 
-        const texture = new Texture("smile-sticker", width, height, data)
+        const name = "smile-sticker"
+        const texture = new Texture(name, width, height, data)
 
         if (debugBorders) TextureUtils.drawDebugBorders(texture)
 
+        TextureUtils.textures[name] = texture
         return texture
     }
 
@@ -280,6 +301,7 @@ export class TextureUtils {
 
             const texture = new Texture(name, textImageData.width, textImageData.height, data)
 
+            TextureUtils.textures[name] = texture
             resolve(texture)
         })
     }
