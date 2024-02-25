@@ -18,9 +18,11 @@ export class Tile {
         public minimap = Color.INDIGO
     ) {
 
+        const defaultTexture = TextureUtils.fromColor(Color.WHITE)
+
         if (!texture) {
 
-            texture = TextureUtils.fromColor(Color.WHITE)
+            texture = defaultTexture
         }
 
         if (texture instanceof Texture) {
@@ -37,6 +39,11 @@ export class Tile {
         else {
 
             this.texture = texture
+
+            if (!texture[Side.NORTH]) texture[Side.NORTH] = defaultTexture
+            if (!texture[Side.SOUTH]) texture[Side.SOUTH] = defaultTexture
+            if (!texture[Side.EAST]) texture[Side.EAST] = defaultTexture
+            if (!texture[Side.WEST]) texture[Side.WEST] = defaultTexture
         }
 
         if (detail instanceof Texture) {
