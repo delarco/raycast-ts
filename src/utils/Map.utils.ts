@@ -201,12 +201,7 @@ export class MapUtils {
 
                         // sides detail
                         if (typeof (jsonTile.detail) === "object") {
-                            console.log(jsonTile);
-                            
                             detail = await sideDetail(jsonTile.detail)
-
-                            console.log(detail[Side.WEST]);
-                            
                         }
 
                         let minimap = Color.fromHex(jsonTile.minimap)
@@ -226,10 +221,6 @@ export class MapUtils {
 
                         map.tiles.push(tile)
                     }
-
-                    const testTile = map.getTile(5, 14)
-                    console.log(testTile);
-                    
 
                     resolve(map)
                 })
