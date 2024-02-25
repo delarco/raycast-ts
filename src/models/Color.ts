@@ -51,4 +51,34 @@ export class Color {
 
         return new Color(color.r * shade, color.g * shade, color.b * shade, color.a);
     }
+
+    public static fromHex(hex: string | null): Color | null {
+
+        if (!hex) return null
+
+        if (/^#(?:[0-9a-fA-F]{3}){1,2}$$/.test(hex)) {
+
+            if (hex.length === 4) {
+                const n = Number("0x" + hex.substring(1, 7))
+                let r = (n & 0xF00) >> 8
+                r = (r << 4) + r
+                let g = (n & 0x0F0) << 4 >> 8
+                g = (g << 4) + g
+                let b = (n & 0x00F)
+                b = (b << 4) + b
+
+                return new Color(r, g, b)
+            }
+            else {
+
+                const n = Number("0x" + hex.substring(1, 7))
+                const r = (n & 0xFF0000) >> 16
+                const g = (n & 0x00FF00) << 8 >> 16
+                const b = (n & 0x0000FF)
+                return new Color(r, g, b)
+            }
+        }
+
+        return null
+    }
 }
