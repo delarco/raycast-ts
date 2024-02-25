@@ -1,7 +1,7 @@
 import { Clock } from "../utils/Clock";
-import { Color } from "./Color";
-import { GameObject } from "./GameObject"
-import { Texture } from "./Texture";
+import { Color } from "../models/Color";
+import { GameObject } from "../models/GameObject"
+import { Texture } from "../models/Texture";
 
 export class Sprite extends GameObject {
 
