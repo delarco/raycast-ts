@@ -21,7 +21,7 @@ export class RaycastScene extends Scene {
     protected keyboard: KeyboardInput | null = null
 
     protected ambientLight = 1.0
-    
+
     protected sprites: Array<Sprite> = []
 
     protected distanceShade = (distance: number): number => 1.0 - distance * 0.1
@@ -80,7 +80,7 @@ export class RaycastScene extends Scene {
 
         if (!this.keyboard) return
 
-        const mov = new Vec2D(
+        const move = new Vec2D(
             Math.cos(this.camera.angle) * this.camera.velocity * clock.deltaTime,
             Math.sin(this.camera.angle) * this.camera.velocity * clock.deltaTime
         )
@@ -90,25 +90,33 @@ export class RaycastScene extends Scene {
             Math.sin(this.camera.angle + Math.PI / 2) * this.camera.velocity * clock.deltaTime
         )
 
+        let newPosition = this.camera.position.clone()
+
         if (this.keyboard.key(KEYS.ARROW_UP) || this.keyboard.key(KEYS.KEY_W)) {
 
-            this.camera.position = VectorUtils.add(this.camera.position, mov)
+            newPosition = VectorUtils.add(newPosition, move)
         }
 
         if (this.keyboard.key(KEYS.ARROW_DOWN) || this.keyboard.key(KEYS.KEY_S)) {
 
-            this.camera.position = VectorUtils.sub(this.camera.position, mov)
+            newPosition = VectorUtils.sub(newPosition, move)
         }
 
         if (this.keyboard.key(KEYS.KEY_A)) {
 
-            this.camera.position = VectorUtils.sub(this.camera.position, strafe)
+            newPosition = VectorUtils.sub(newPosition, strafe)
         }
 
         if (this.keyboard.key(KEYS.KEY_D)) {
 
-            this.camera.position = VectorUtils.add(this.camera.position, strafe)
+            newPosition = VectorUtils.add(newPosition, strafe)
         }
+
+        const tileX = this.map.getTile(newPosition.x, this.camera.y)
+        const tileY = this.map.getTile(this.camera.x, newPosition.y)
+
+        if (!tileX?.solid && newPosition.x > 0 && newPosition.x < this.map.width) this.camera.x = newPosition.x
+        if (!tileY?.solid && newPosition.y > 0 && newPosition.y < this.map.height) this.camera.y = newPosition.y
     }
 
     public override draw(renderer: Renderer): void {
