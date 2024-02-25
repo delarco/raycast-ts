@@ -16,4 +16,14 @@ export class Camera extends GameObject {
         this.velocity = velocity
         this.angularVelocity = angularVelocity
     }
+
+    public fixAngle() {
+
+        if (this.angle < 0) {
+            this.angle = (2 * Math.PI) - this.angle
+        }
+        else if (this.angle > 2 * Math.PI) {
+            this.angle -= 2 * Math.PI
+        }
+    }
 }

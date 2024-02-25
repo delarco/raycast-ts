@@ -68,11 +68,13 @@ export class RaycastScene extends Scene {
         if (this.keyboard.key(KEYS.ARROW_LEFT) || this.keyboard.key(KEYS.KEY_Q)) {
 
             this.camera.angle -= this.camera.angularVelocity * clock.deltaTime
+            this.camera.fixAngle()
         }
 
         if (this.keyboard.key(KEYS.ARROW_RIGHT) || this.keyboard.key(KEYS.KEY_E)) {
 
             this.camera.angle += this.camera.angularVelocity * clock.deltaTime
+            this.camera.fixAngle()
         }
     }
 
