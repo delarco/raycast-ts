@@ -174,7 +174,7 @@ export class RaycastScene extends Scene {
                     const planePoint = VectorUtils.add(this.camera.position, VectorUtils.mul(rayDirection, planeZ * 2.0 / Math.cos(rayAngle - this.camera.angle)))
                     const tilePos = VectorUtils.int(planePoint)
                     const tex = new Vec2D(planePoint.x - tilePos.x, planePoint.y - tilePos.y)
-                    const tile = this.map.getTile(tilePos.y, tilePos.x)
+                    const tile = this.map.getTile(tilePos.x, tilePos.y)
 
                     if (tile?.detail[Side.TOP]) {
 
@@ -202,41 +202,29 @@ export class RaycastScene extends Scene {
                         if (detailColor?.a == 255) pixelColor = detailColor
                     }
 
-                    shade = this.distanceShade(rayLength)
+                    if (!pixelColor || pixelColor.a < 255) {
+
+                        if (y <= halfResolution.height) {
+                            pixelColor = this.getSkyboxColor(rayAngle, y)
+                        }
+                        else {
+                            const planeZ = halfResolution.height / (y - halfResolution.height)
+                            pixelColor = this.getFloorColor(rayDirection, rayAngle, planeZ)
+                            shade = this.distanceShade(rayLength)
+                        }
+                    }
+                    else {
+
+                        shade = this.distanceShade(rayLength)
+                    }
+
                 }
 
                 // floor
                 else {
 
                     const planeZ = halfResolution.height / (y - halfResolution.height)
-                    const planePoint = VectorUtils.add(this.camera.position, VectorUtils.mul(rayDirection, planeZ * 2.0 / Math.cos(rayAngle - this.camera.angle)))
-                    const tilePos = VectorUtils.int(planePoint)
-                    const tex = new Vec2D(planePoint.x - tilePos.x, planePoint.y - tilePos.y)
-                    const tile = this.map.getTile(tilePos.y, tilePos.x)
-
-                    if (tile?.detail[Side.BOTTOM]) {
-
-                        const detailColor = tile.detail[Side.BOTTOM].sampleColor(tex.x, tex.y)
-                        if (detailColor?.a == 255) pixelColor = detailColor
-                    }
-
-                    if (!pixelColor && tile?.texture[Side.BOTTOM]) {
-
-                        pixelColor = tile.texture[Side.BOTTOM].sampleColor(tex.x, tex.y)
-                    }
-
-                    if (!pixelColor) {
-
-                        if (this.map.floor instanceof Color) {
-
-                            pixelColor = this.map.floor
-                        }
-                        else {
-
-                            pixelColor = this.map.floor.sampleColor(tex.x, tex.y)
-                        }
-                    }
-
+                    pixelColor = this.getFloorColor(rayDirection, rayAngle, planeZ)
                     shade = this.distanceShade(planeZ)
                 }
 
@@ -473,5 +461,40 @@ export class RaycastScene extends Scene {
         if (tx < 0) tx = 1 + tx
         const ty = y / (this.gameInstance.resolution.height - 1)
         return this.map.skybox.sampleColor(tx, ty)
+    }
+
+    private getFloorColor(rayDirection: Vec2D, rayAngle: number, planeZ: number): Color {
+
+        let pixelColor: Color | null = null
+
+        const planePoint = VectorUtils.add(this.camera.position, VectorUtils.mul(rayDirection, planeZ * 2.0 / Math.cos(rayAngle - this.camera.angle)))
+        const tilePos = VectorUtils.int(planePoint)
+        const tex = new Vec2D(planePoint.x - tilePos.x, planePoint.y - tilePos.y)
+        const tile = this.map.getTile(tilePos.x, tilePos.y)
+
+        if (tile?.detail[Side.BOTTOM]) {
+
+            const detailColor = tile.detail[Side.BOTTOM].sampleColor(tex.x, tex.y)
+            if (detailColor?.a == 255) pixelColor = detailColor
+        }
+
+        if (!pixelColor && tile?.texture[Side.BOTTOM]) {
+
+            pixelColor = tile.texture[Side.BOTTOM].sampleColor(tex.x, tex.y)
+        }
+
+        if (!pixelColor) {
+
+            if (this.map.floor instanceof Color) {
+
+                pixelColor = this.map.floor
+            }
+            else {
+
+                pixelColor = this.map.floor.sampleColor(tex.x, tex.y)
+            }
+        }
+
+        return pixelColor
     }
 }
