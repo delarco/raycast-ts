@@ -14,6 +14,7 @@ export class Color {
     public static readonly INDIGO = new Color(232, 234, 246)
     public static readonly YELLOW = new Color(255, 255, 0)
     public static readonly ORANGE = new Color(255, 160, 0)
+    public static readonly BROWN = new Color(165, 42, 42)
 
     private color: Uint8Array
     private _cssHex: string
