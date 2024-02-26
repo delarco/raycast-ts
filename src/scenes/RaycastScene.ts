@@ -23,7 +23,8 @@ export class RaycastScene extends Scene {
 
     protected ambientLight = 1.0
 
-    protected sprites: Array<Sprite> = []
+    private useRecharging = false
+    private useCooldown = 1000
 
     protected distanceShade = (distance: number): number => 1.0 - distance * 0.1
 
@@ -55,6 +56,7 @@ export class RaycastScene extends Scene {
         this.updateCamera(clock)
         this.checkSpriteCollision()
         this.checkProjectileCollisionOrOutOfMap()
+        this.checkUseCommand()
         super.update(clock)
     }
 
@@ -152,7 +154,11 @@ export class RaycastScene extends Scene {
 
             const tile = this.map.getTile(projectile.x, projectile.y)
 
-            if (tile && tile.collision) despawn()
+            if (tile && tile.collision) {
+                despawn()
+                if (tile.onProjectileHit) tile.onProjectileHit()
+                if (projectile.onCollision) projectile.onCollision(tile)
+            }
 
             if (projectile.x <= 0
                 || projectile.y <= 0
@@ -173,6 +179,25 @@ export class RaycastScene extends Scene {
                     if (projectile.onCollision) projectile.onCollision(sprite)
                 }
             }
+        }
+    }
+
+    private checkUseCommand(): void {
+
+        if (!this.keyboard.key(KEYS.ENTER) || this.useRecharging) return
+
+        const usePosition = new Vec2D(
+            this.camera.x + Math.cos(this.camera.angle) * 1.5,
+            this.camera.y + Math.sin(this.camera.angle) * 1.5,
+        )
+
+        const tile = this.map.getTile(usePosition.x, usePosition.y)
+
+        if (tile && tile.onUse) {
+            this.useRecharging = true
+            tile.onUse()
+
+            setTimeout(() => this.useRecharging = false, this.useCooldown)
         }
     }
 
