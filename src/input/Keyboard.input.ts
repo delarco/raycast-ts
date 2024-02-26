@@ -9,6 +9,8 @@ export enum KEYS {
     KEY_W = 'KeyW',
     KEY_Q = 'KeyQ',
     KEY_E = 'KeyE',
+    ENTER = "Enter",
+    SPACE = "Space",
 }
 
 export class KeyboardInput {
@@ -36,7 +38,7 @@ export class KeyboardInput {
         this.keyState[ev.code] = false
     }
 
-    public key(key: KEYS) {
+    public key(key: KEYS | string) {
 
         return this.keyState[key]
     }
