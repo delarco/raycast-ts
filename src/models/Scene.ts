@@ -32,7 +32,7 @@ export class Scene {
 
     public draw(renderer: Renderer) {
 
-        for (const gameObject of this.objects) {
+        for (const gameObject of this.objects.filter(object => object.visible)) {
 
             gameObject.draw(renderer)
         }

@@ -4,7 +4,6 @@ import { TextureUtils } from "../utils/Texture.utils"
 import { Color } from "./Color"
 import { Map } from "./Map"
 import { Texture } from "./Texture"
-import { Text } from "../objects/Text"
 import { RaycastScene, Size } from "../.."
 import { Scene } from "./Scene"
 
