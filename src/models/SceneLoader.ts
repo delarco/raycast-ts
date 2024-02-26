@@ -13,7 +13,7 @@ enum LoadType {
     MAP_ARRAY,
     TEXTURE,
     COLOR_TEXTURE,
-    TEXT,
+    TEXT_TEXTURE,
     DELAY,
     SKY,
 }
@@ -26,7 +26,6 @@ export class SceneLoader {
     private _loadList = new Array<any>()
     private _textures = new Array<Texture>()
     private _map: Map = new Map()
-    private _texts = new Array<Text>()
 
     public get loading() { return this._loading }
 
@@ -40,11 +39,6 @@ export class SceneLoader {
     public getMap(): Map {
 
         return this._map
-    }
-
-    public getText(name: string): Text | null {
-
-        return this._texts.find(t => t.name === name) || null
     }
 
     public map(path: string): void {
@@ -67,9 +61,9 @@ export class SceneLoader {
         this._loadList.push({ type: LoadType.COLOR_TEXTURE, name, color })
     }
 
-    public text(name: string, text: string, style: TextStyle): void {
+    public textTexture(name: string, text: string, style: TextStyle): void {
 
-        this._loadList.push({ type: LoadType.TEXT, name, text, style })
+        this._loadList.push({ type: LoadType.TEXT_TEXTURE, name, text, style })
     }
 
     public delay(milliseconds: number): void {
@@ -106,7 +100,7 @@ export class SceneLoader {
                     promises.push(this.loadColorTexture(item.name, item.color))
                     break
 
-                case LoadType.TEXT:
+                case LoadType.TEXT_TEXTURE:
                     promises.push(this.loadText(item.name, item.text, item.style))
                     break
 
@@ -134,10 +128,6 @@ export class SceneLoader {
 
                 case LoadType.TEXTURE:
                     this._textures.push(item.value)
-                    break
-
-                case LoadType.TEXT:
-                    this._texts.push(item.value)
                     break
 
                 case LoadType.SKY:
@@ -182,10 +172,10 @@ export class SceneLoader {
         }))
     }
 
-    private async loadText(name: string, text: string, style: TextStyle): Promise<{ type: LoadType, value: Text }> {
+    private async loadText(name: string, text: string, style: TextStyle): Promise<{ type: LoadType, value: Texture }> {
         return new Promise(async resolve => resolve({
-            type: LoadType.TEXT,
-            value: new Text(name, 0, 0, await TextureUtils.createTextTexture(name, text, style))
+            type: LoadType.TEXTURE,
+            value: await TextureUtils.createTextTexture(name, text, style)
         }))
     }
 

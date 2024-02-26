@@ -5,6 +5,7 @@ import { Rectangle } from "../objects/Rectangle"
 import { TextureUtils } from "../utils/Texture.utils"
 import { SpriteParams } from "../interfaces/SpriteParams"
 import { Sprite } from "../objects/Sprite"
+import { Text } from "../objects/Text"
 
 export class SceneAdder {
 
@@ -31,5 +32,14 @@ export class SceneAdder {
         const sprite = new Sprite("SPRITE", x, y, w, h, tex, params)
         this.object(sprite)
         return sprite
+    }
+
+    public text(x: number, y: number, texture: string): Text {
+
+        const tex = TextureUtils.getTexture(texture)
+        if (!tex) throw new Error(`Texture ${texture} not found.`)
+        const text = new Text("TEXT", x, y, tex)
+        this.object(text)
+        return text
     }
 }
