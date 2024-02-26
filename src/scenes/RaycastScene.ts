@@ -52,6 +52,7 @@ export class RaycastScene extends Scene {
     public override update(clock: Clock): void {
 
         this.updateCamera(clock)
+        this.checkSpriteCollision()
         super.update(clock)
     }
 
@@ -119,6 +120,21 @@ export class RaycastScene extends Scene {
 
         if (!tileX?.collision && newPosition.x > 0 && newPosition.x < this.map.width) this.camera.x = newPosition.x
         if (!tileY?.collision && newPosition.y > 0 && newPosition.y < this.map.height) this.camera.y = newPosition.y
+    }
+
+    private checkSpriteCollision(): void {
+
+        const margin = 1
+
+        for (let sprite of this.objects.filter(obj => obj.visible && obj instanceof Sprite && obj.onCollision)) {
+
+            if (sprite.x >= this.camera.x - margin
+                && sprite.x <= this.camera.x + margin
+                && sprite.y >= this.camera.y - margin
+                && sprite.y <= this.camera.y + margin) {
+                (<Sprite>sprite).onCollision!()
+            }
+        }
     }
 
     public override draw(renderer: Renderer): void {
