@@ -13,12 +13,13 @@ import { Clock } from "../utils/Clock"
 import { KEYS, KeyboardInput } from "../input/Keyboard.input"
 import { Sprite } from "../objects/Sprite"
 import { Game } from "../Game"
+import { Projectile } from "../objects/Projectile"
 
 export class RaycastScene extends Scene {
 
     protected map: Map = new Map()
     protected camera: Camera = new Camera(0, 0, 0)
-    protected keyboard: KeyboardInput | null = null
+    protected keyboard: KeyboardInput
 
     protected ambientLight = 1.0
 
@@ -53,6 +54,7 @@ export class RaycastScene extends Scene {
 
         this.updateCamera(clock)
         this.checkSpriteCollision()
+        this.checkProjectileCollisionOrOutOfMap()
         super.update(clock)
     }
 
@@ -132,7 +134,44 @@ export class RaycastScene extends Scene {
                 && sprite.x <= this.camera.x + margin
                 && sprite.y >= this.camera.y - margin
                 && sprite.y <= this.camera.y + margin) {
-                (<Sprite>sprite).onCollision!()
+                (<Sprite>sprite).onCollision!(this.camera)
+            }
+        }
+    }
+
+    private checkProjectileCollisionOrOutOfMap(): void {
+
+        for (let object of this.objects.filter(obj => obj.visible && obj instanceof Projectile)) {
+
+            const projectile = object as Projectile
+
+            const despawn = () => {
+                projectile.visible = false
+                this.objects = this.objects.filter(obj => obj !== projectile)
+            }
+
+            const tile = this.map.getTile(projectile.x, projectile.y)
+
+            if (tile && tile.collision) despawn()
+
+            if (projectile.x <= 0
+                || projectile.y <= 0
+                || projectile.x >= this.map.size.width
+                || projectile.y >= this.map.height
+            ) despawn()
+
+            for (const sprite of this.objects.filter(obj => obj.visible && obj !== projectile && obj instanceof Sprite)) {
+
+                const margin = sprite.width / 2
+
+                if (sprite.x >= projectile.x
+                    && sprite.x <= projectile.x + margin
+                    && sprite.y >= projectile.y - margin
+                    && sprite.y <= projectile.y + margin) {
+
+                    despawn()
+                    if (projectile.onCollision) projectile.onCollision(sprite)
+                }
             }
         }
     }
