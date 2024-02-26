@@ -3,6 +3,7 @@ import { Color } from "../models/Color";
 import { GameObject } from "../models/GameObject"
 import { Texture } from "../models/Texture";
 import { SpriteParams } from "../interfaces/SpriteParams";
+import { Tile } from "../..";
 
 export class Sprite extends GameObject {
 
@@ -10,7 +11,7 @@ export class Sprite extends GameObject {
     private lastTime = 0
     private frames: number
 
-    public onCollision: ((object: GameObject) => void) | null = null
+    public onCollision: ((object: GameObject | Tile) => void) | null = null
 
     constructor(
         name: string,
@@ -29,6 +30,9 @@ export class Sprite extends GameObject {
         this.height = height
         this.texture = texture
 
+        if(!params.frameWidth) params.frameWidth = texture.width
+        if(!params.frameHeight) params.frameHeight = texture.height
+
         this.frames = Math.trunc(texture.width / params.frameWidth) * Math.trunc(texture.height / params.frameHeight)
         if (!params.frameChangeTime) params.frameChangeTime = 200
     }
@@ -41,14 +45,15 @@ export class Sprite extends GameObject {
 
     public sampleColor(x: number, y: number): Color {
 
-        const offsetX = this.currentFrameCounter * this.params.frameWidth
+        const offsetX = this.currentFrameCounter * this.params.frameWidth!
 
         if (x < 0) x = 1 - x
         if (y < 0) y = 1 - y
 
         // TODO: refactor
-        const sx = Math.min(Math.trunc((x * this.params.frameWidth)), this.params.frameWidth - 1);
-        const sy = Math.min(Math.trunc((y * this.params.frameHeight)), this.params.frameHeight - 1);
+        const sx = Math.min(Math.trunc((x * this.params.frameWidth!)), this.params.frameWidth! - 1);
+        const sy = Math.min(Math.trunc((y * this.params.frameHeight!)), this.params.frameHeight! - 1);
+
         return this.texture.getPixelColor(offsetX + sx, sy);
     }
 
