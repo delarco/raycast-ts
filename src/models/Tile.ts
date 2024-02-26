@@ -9,6 +9,9 @@ export class Tile {
     public texture: { [key in Side]: Texture | null }
     public detail: { [key in Side]: Texture | null }
 
+    public onUse: (() => void) | null = null
+    public onProjectileHit: (() => void) | null = null
+
     constructor(
         public position: Vec2D,
         public solid: boolean,
