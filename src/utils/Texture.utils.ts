@@ -15,7 +15,7 @@ export class TextureUtils {
         TextureUtils.resolution = resolution
         TextureUtils.offscrenCanvas = new OffscreenCanvas(resolution.width, resolution.height)
 
-        const context = TextureUtils.offscrenCanvas.getContext("2d")
+        const context = TextureUtils.offscrenCanvas.getContext("2d", { willReadFrequently: true })
         if (!context) throw new Error("Can't create get OffscreenCanvas context")
         TextureUtils.textContext = context
     }

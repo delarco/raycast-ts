@@ -15,7 +15,7 @@ export class OffscreenImageDataRenderer2D implements Renderer {
 
     constructor(offscreenCanvas: OffscreenCanvas) {
 
-        const context = offscreenCanvas.getContext("2d")
+        const context = offscreenCanvas.getContext("2d", { willReadFrequently: true })
 
         if (!context) {
             throw new Error("Can't get context")
