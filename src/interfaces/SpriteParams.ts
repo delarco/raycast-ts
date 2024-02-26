@@ -1,6 +1,6 @@
 export interface SpriteParams {
 
-    frameWidth: number,
-    frameHeight: number,
+    frameWidth?: number,
+    frameHeight?: number,
     frameChangeTime?: number
 }
