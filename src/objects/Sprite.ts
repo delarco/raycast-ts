@@ -10,7 +10,7 @@ export class Sprite extends GameObject {
     private lastTime = 0
     private frames: number
 
-    public onCollision: (() => void) | null = null
+    public onCollision: ((object: GameObject) => void) | null = null
 
     constructor(
         name: string,
