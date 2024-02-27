@@ -105,4 +105,14 @@ export class Minimap extends GameObject {
             )
         }
     }
+
+    public addMarker(marker: MinimapMarker): void {
+
+        this.markers.push(marker)
+    }
+
+    public removeMarker(marker: MinimapMarker): void {
+
+        this.markers = this.markers.filter(m => m !== marker)
+    }
 }
