@@ -166,8 +166,9 @@ export class RaycastScene extends Scene {
                 || projectile.y >= this.map.height
             ) despawn()
 
-            for (const sprite of this.objects.filter(obj => obj.visible && obj !== projectile && obj instanceof Sprite)) {
+            for (const object of this.objects.filter(obj => obj.visible && obj !== projectile && obj instanceof Sprite && (obj.onCollision || obj.onProjectileHit))) {
 
+                const sprite = object as Sprite
                 const margin = sprite.width / 2
 
                 if (sprite.x >= projectile.x
@@ -176,6 +177,7 @@ export class RaycastScene extends Scene {
                     && sprite.y <= projectile.y + margin) {
 
                     despawn()
+                    if (sprite.onProjectileHit) sprite.onProjectileHit()
                     if (projectile.onCollision) projectile.onCollision(sprite)
                 }
             }

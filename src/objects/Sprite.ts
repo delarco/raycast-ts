@@ -12,6 +12,7 @@ export class Sprite extends GameObject {
     private frames: number
 
     public onCollision: ((object: GameObject | Tile) => void) | null = null
+    public onProjectileHit: (() => void) | null = null
 
     constructor(
         name: string,
