@@ -43,7 +43,7 @@ export class GameObject implements Size {
 
     public init(): void { }
 
-    public draw(renderer: Renderer): void { }
+    public draw(renderer: Renderer): void { renderer }
 
-    public update(clock: Clock) { }
+    public update(clock: Clock) { clock }
 }
