@@ -37,4 +37,9 @@ export class Scene {
             gameObject.draw(renderer)
         }
     }
+
+    public getObject(name: string): GameObject | null {
+
+        return this.objects.find(obj => obj.name === name) || null
+    }
 }

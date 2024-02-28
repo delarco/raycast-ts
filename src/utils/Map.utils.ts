@@ -5,7 +5,7 @@ import { TextureUtils } from "./Texture.utils";
 import { Tile } from "../models/Tile";
 import { Vec2D } from "../models/Vec2D";
 import { Texture } from "../models/Texture";
-import { Side } from "../..";
+import { Side, Sprite } from "../..";
 
 export class MapUtils {
 
@@ -47,46 +47,46 @@ export class MapUtils {
     }
 
     // TODO: implement toJson
-    public static toJson(map: Map): object {
+    // public static toJson(map: Map): object {
 
-        const convertTexture = (tile: Tile) => {
+    //     const convertTexture = (tile: Tile) => {
 
-            let tex: any = {
-                north: null,
-                south: null,
-                west: null,
-                east: null,
-                top: tile.texture[Side.TOP]?.name,
-                bottom: tile.texture[Side.BOTTOM]?.name,
-            }
+    //         let tex: any = {
+    //             north: null,
+    //             south: null,
+    //             west: null,
+    //             east: null,
+    //             top: tile.texture[Side.TOP]?.name,
+    //             bottom: tile.texture[Side.BOTTOM]?.name,
+    //         }
 
-            if (tile.solid) {
-                tex.north = tile.texture[Side.NORTH]?.name
-                tex.south = tile.texture[Side.SOUTH]?.name
-                tex.west = tile.texture[Side.WEST]?.name
-                tex.east = tile.texture[Side.EAST]?.name
-            }
+    //         if (tile.solid) {
+    //             tex.north = tile.texture[Side.NORTH]?.name
+    //             tex.south = tile.texture[Side.SOUTH]?.name
+    //             tex.west = tile.texture[Side.WEST]?.name
+    //             tex.east = tile.texture[Side.EAST]?.name
+    //         }
 
-            return tex
-        }
+    //         return tex
+    //     }
 
-        return {
-            name: "Map Name",
-            size: map.size,
-            skybox: "#AAAAFF",
-            floor: "#AAFFAA",
-            spawn: map.spawn,
-            tiles: map.tiles.map(tile => {
-                return {
-                    position: tile.position,
-                    solid: tile.solid,
-                    texture: convertTexture(tile),
-                    // details: tile.detail,
-                    minimap: tile.minimap.cssHex
-                }
-            })
-        }
-    }
+    //     return {
+    //         name: "Map Name",
+    //         size: map.size,
+    //         skybox: "#AAAAFF",
+    //         floor: "#AAFFAA",
+    //         spawn: map.spawn,
+    //         tiles: map.tiles.map(tile => {
+    //             return {
+    //                 position: tile.position,
+    //                 solid: tile.solid,
+    //                 texture: convertTexture(tile),
+    //                 // details: tile.detail,
+    //                 minimap: tile.minimap.cssHex
+    //             }
+    //         })
+    //     }
+    // }
 
     public static async fromJson(path: string): Promise<Map> {
 
@@ -220,6 +220,34 @@ export class MapUtils {
                         )
 
                         map.tiles.push(tile)
+                    }
+
+                    // load sprites
+                    for (const jsonSprite of jsonMap.sprites) {
+
+                        const texture = await TextureUtils.fromFile(`SPRITE_${jsonSprite.name}_TEXTURE`, jsonSprite.texture)
+                        if (!texture) throw new Error(`Can't load texture ${jsonSprite.texture}.`)
+
+                        if (jsonSprite.position.constructor !== Array) {
+                            jsonSprite.position = [jsonSprite.position]
+                        }
+
+                        for (const position of jsonSprite.position) {
+
+                            const sprite = new Sprite(
+                                jsonSprite.name,
+                                position.x,
+                                position.y,
+                                jsonSprite.size.width,
+                                jsonSprite.size.height,
+                                texture,
+                                jsonSprite.params
+                            )
+
+                            sprite.visible = jsonSprite.visible
+                            map.sprites.push(sprite)
+                        }
+
                     }
 
                     resolve(map)

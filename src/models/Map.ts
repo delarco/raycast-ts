@@ -1,3 +1,4 @@
+import { Sprite } from "../.."
 import { Size } from "../interfaces/Size"
 import { Color } from "./Color"
 import { Texture } from "./Texture"
@@ -12,6 +13,7 @@ export class Map {
     public skybox: Texture | Color = Color.LIGHT_BLUE
     public floor: Texture | Color = Color.LIGHT_GREEN
     public spawn = new Array<Vec2D>(new Vec2D(0, 0))
+    public sprites: Array<Sprite> = []
 
     public get width() { return this.size.width }
     public get height() { return this.size.height }

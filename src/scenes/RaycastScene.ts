@@ -40,6 +40,7 @@ export class RaycastScene extends Scene {
 
         const spawn = map.getRandomSpawnLocation()
         this.camera = new Camera(spawn.x, spawn.y)
+        for (const sprite of map.sprites) this.add.object(sprite)
     }
 
     public preload(): void {
