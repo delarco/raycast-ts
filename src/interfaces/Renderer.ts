@@ -5,6 +5,7 @@ import { Texture } from "../models/Texture"
 export interface Renderer {
 
     resolution: Size
+    skipClear: boolean
 
     clear(color?: Color): void
 

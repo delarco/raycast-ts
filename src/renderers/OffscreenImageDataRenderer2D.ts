@@ -13,6 +13,8 @@ export class OffscreenImageDataRenderer2D implements Renderer {
 
     public get resolution() { return this._resolution }
 
+    public skipClear: boolean = false
+
     constructor(offscreenCanvas: OffscreenCanvas) {
 
         const context = offscreenCanvas.getContext("2d", { willReadFrequently: true })
@@ -34,6 +36,10 @@ export class OffscreenImageDataRenderer2D implements Renderer {
     }
 
     clear(): void {
+
+        for (let i = 0; i < this.colorBuffer.length; i++) {
+            this.colorBuffer[i] = 0
+        }
 
         for (let i = 0; i < this.depthBuffer.length; i++) {
 
