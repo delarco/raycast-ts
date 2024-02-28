@@ -20,6 +20,11 @@ export class TextureUtils {
         TextureUtils.textContext = context
     }
 
+    public static reset(): void {
+
+        this.textures = {}
+    }
+
     public static getTexture(name: string): Texture | null {
 
         return TextureUtils.textures[name] || null
@@ -55,7 +60,7 @@ export class TextureUtils {
 
         return new Promise((resolve, reject) => {
 
-            if(name in TextureUtils.textures) {
+            if (name in TextureUtils.textures) {
                 resolve(TextureUtils.textures[name])
                 return
             }
