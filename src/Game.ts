@@ -22,6 +22,7 @@ export class Game {
     public get resolution() { return this._resolution }
     public get keyboardInput() { return this._keyboardInput }
     public get currentScene() { return this._currentScene }
+    public get renderer() { return this._renderer }
 
     public onFpsChange: ((fps: number) => void) | null = null
     public onLoadingStart: (() => void) | null = null
@@ -83,12 +84,9 @@ export class Game {
         this._clock.tick(time)
         this._renderer.clear()
 
-        if (this._currentScene) {
-
-            this._currentScene.update(this._clock)
-            this._currentScene.draw(this._renderer)
-        }
-
+        if (this._currentScene) this._currentScene.update(this._clock)
+        if (this._currentScene) this._currentScene.draw(this._renderer)
+        
         this._renderer.flush()
 
         if (this._clock.updateFps && this.onFpsChange) this.onFpsChange(this._clock.fps)
@@ -98,8 +96,11 @@ export class Game {
 
     public async start(sceneType: typeof Scene): Promise<void> {
 
+        this._currentScene = null
         this.loading = true
 
+        TextureUtils.reset()
+        
         const scene = new sceneType(this)
         scene.preload()
         await scene.load.load()
