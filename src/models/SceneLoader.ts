@@ -5,6 +5,7 @@ import { Color } from "./Color"
 import { Map } from "./Map"
 import { Texture } from "./Texture"
 import { RaycastScene, Size } from "../.."
+import { Audio, AudioType } from "../models/Audio"
 import { Scene } from "./Scene"
 
 enum LoadType {
@@ -15,6 +16,7 @@ enum LoadType {
     TEXT_TEXTURE,
     DELAY,
     SKY,
+    AUDIO,
 }
 
 type LoadResult = { type: LoadType, value: any }
@@ -25,6 +27,7 @@ export class SceneLoader {
     private _loadList = new Array<any>()
     private _textures = new Array<Texture>()
     private _map: Map = new Map()
+    private _audios = new Array<Audio>()
 
     public get loading() { return this._loading }
 
@@ -38,6 +41,11 @@ export class SceneLoader {
     public getMap(): Map {
 
         return this._map
+    }
+
+    public getAudio(name: string): Audio | null {
+
+        return this._audios.find(t => t.name === name) || null
     }
 
     public map(path: string): void {
@@ -75,6 +83,11 @@ export class SceneLoader {
         this._loadList.push({ type: LoadType.SKY, sky })
     }
 
+    public audio(name: string, type: AudioType, path: string): void {
+
+        this._loadList.push({ type: LoadType.AUDIO, name, audioType: type, path })
+    }
+
     public async load(): Promise<void> {
 
         const promises = []
@@ -110,6 +123,11 @@ export class SceneLoader {
                 case LoadType.SKY:
                     promises.push(this.loadSky(item.sky))
                     break
+
+                case LoadType.AUDIO:
+                    promises.push(this.loadAudio(item.name, item.audioType, item.path))
+                    break
+
             }
         }
 
@@ -131,6 +149,10 @@ export class SceneLoader {
 
                 case LoadType.SKY:
                     sky = item.value
+                    break
+
+                case LoadType.AUDIO:
+                    this._audios.push(item.value)
                     break
             }
         }
@@ -193,5 +215,17 @@ export class SceneLoader {
             })
 
         }
+    }
+
+    private async loadAudio(name: string, type: AudioType, path: string): Promise<{ type: LoadType.AUDIO, value: Audio }> {
+
+        return new Promise(resolve => {
+
+            const audioElement = new window.Audio(path)
+            audioElement.preload = "metadata"
+
+            const audio = new Audio(name, path, type, audioElement);
+            resolve({ type: LoadType.AUDIO, value: audio })
+        })
     }
 }
