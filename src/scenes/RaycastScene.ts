@@ -31,6 +31,7 @@ export class RaycastScene extends Scene {
     constructor(public gameInstance: Game) {
         super(gameInstance)
         this.keyboard = this.gameInstance.keyboardInput
+        gameInstance.renderer.skipClear = true
     }
 
     public setMap(map: Map) {
