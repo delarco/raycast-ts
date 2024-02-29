@@ -4,6 +4,7 @@ import { GameObject } from "../models/GameObject"
 import { Game } from "../Game"
 import { SceneLoader } from "../models/SceneLoader"
 import { SceneAdder } from "../models/SceneAdder"
+import { Vec2D } from "./Vec2D"
 
 export class Scene {
 
@@ -41,5 +42,13 @@ export class Scene {
     public getObject(name: string): GameObject | null {
 
         return this.objects.find(obj => obj.name === name) || null
+    }
+
+    public onMouseClick(position: Vec2D, button: number): void {
+        position; button
+    }
+
+    public onMouseMove(position: Vec2D): void {
+        position
     }
 }
