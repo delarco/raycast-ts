@@ -10,6 +10,7 @@ export class GameConfig {
     private _fieldOfView: number
     private _unitSize: number
     private _backgroundColor: Color
+    private _mouseSensitivity: number
     private _debug: boolean
 
     /**
@@ -62,6 +63,13 @@ export class GameConfig {
     }
 
     /**
+     * Mouse sensitivity.
+     */
+    public get mouseSensitivity() {
+        return this._mouseSensitivity
+    }
+
+    /**
      * Debug flag.
      */
     public get debug() {
@@ -75,6 +83,7 @@ export class GameConfig {
         fieldOfView: number = Math.PI / 3,
         unitSize: number = 32,
         backgroundColor = Color.INDIGO,
+        mouseSensitivity = 0.15,
         debug = true
     ) {
         this._element = element
@@ -83,6 +92,7 @@ export class GameConfig {
         this._fieldOfView = fieldOfView
         this._unitSize = unitSize
         this._backgroundColor = backgroundColor
+        this._mouseSensitivity = mouseSensitivity
         this._debug = debug
     }
 
