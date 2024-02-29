@@ -62,6 +62,11 @@ export class RaycastScene extends Scene {
         super.update(clock)
     }
 
+    public onMouseMove(position: Vec2D): void {
+        this.camera.angle = this.camera.angle + this.gameInstance.config.mouseSensitivity * position.x * 0.02
+        this.camera.fixAngle()
+    }
+
     protected updateCamera(clock: Clock): void {
 
         this.updateCameraRotation(clock)
@@ -72,13 +77,13 @@ export class RaycastScene extends Scene {
 
         if (!this.keyboard) return
 
-        if (this.keyboard.key(KEYS.ARROW_LEFT) || this.keyboard.key(KEYS.KEY_Q)) {
+        if (this.keyboard.key(KEYS.ARROW_LEFT)) {
 
             this.camera.angle -= this.camera.angularVelocity * clock.deltaTime
             this.camera.fixAngle()
         }
 
-        if (this.keyboard.key(KEYS.ARROW_RIGHT) || this.keyboard.key(KEYS.KEY_E)) {
+        if (this.keyboard.key(KEYS.ARROW_RIGHT)) {
 
             this.camera.angle += this.camera.angularVelocity * clock.deltaTime
             this.camera.fixAngle()
@@ -188,7 +193,7 @@ export class RaycastScene extends Scene {
 
     private checkUseCommand(): void {
 
-        if (!this.keyboard.key(KEYS.ENTER) || this.useRecharging) return
+        if (!this.keyboard.key(KEYS.KEY_E) || this.useRecharging) return
 
         const usePosition = new Vec2D(
             this.camera.x + Math.cos(this.camera.angle) * 1.5,
