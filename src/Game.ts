@@ -1,6 +1,7 @@
-import { Size } from ".."
+import { Size } from "./interfaces/Size"
 import { GameConfig } from "./GameConfig"
 import { KeyboardInput } from "./input/Keyboard.input"
+import { MouseInput } from "./input/Mouse.input"
 import { Renderer } from "./interfaces/Renderer"
 import { Scene } from "./models/Scene"
 import { OffscreenImageDataRenderer2D } from "./renderers/OffscreenImageDataRenderer2D"
@@ -16,6 +17,7 @@ export class Game {
     private _clock: Clock
     private _currentScene: Scene | null = null
     private _keyboardInput: KeyboardInput
+    private _mouseInput: MouseInput
     private _loading: boolean = false
 
     public get config() { return this._config }
@@ -73,6 +75,7 @@ export class Game {
         TextureUtils.init(this.resolution)
 
         this._keyboardInput = new KeyboardInput()
+        this._mouseInput = new MouseInput(this._canvas)
         this._clock = new Clock()
         this.loading = false
 
@@ -102,6 +105,10 @@ export class Game {
         TextureUtils.reset()
         
         const scene = new sceneType(this)
+
+        this._mouseInput.onClick = (position, button) => scene.onMouseClick(position, button)
+        this._mouseInput.onMove = (position) => scene.onMouseMove(position)
+
         scene.preload()
         await scene.load.load()
         scene.init()
