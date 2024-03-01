@@ -77,7 +77,7 @@ export class GameConfig {
     }
 
     constructor(
-        element: HTMLElement | null,
+        element: HTMLElement | null = null,
         resolution: Size = { width: 320, height: 240 },
         viewPort: Size = { width: 800, height: 600 },
         fieldOfView: number = Math.PI / 3,
