@@ -12,7 +12,7 @@ export class Map {
     public size: Size = { width: 0, height: 0 }
     public skybox: Texture | Color = Color.LIGHT_BLUE
     public floor: Texture | Color = Color.LIGHT_GREEN
-    public spawn = new Array<Vec2D>(new Vec2D(0, 0))
+    public spawn = new Array<Vec2D>(new Vec2D(1.5, 1.5))
     public sprites: Array<Sprite> = []
 
     public get width() { return this.size.width }
