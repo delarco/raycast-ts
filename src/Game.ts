@@ -39,7 +39,7 @@ export class Game {
         if (!value && this.onLoadingEnd) this.onLoadingEnd()
     }
 
-    constructor(config: GameConfig) {
+    constructor(config: GameConfig = new GameConfig()) {
 
         this.loading = true
         this._config = config
@@ -53,7 +53,7 @@ export class Game {
         }
         else {
             this._canvas = document.createElement("canvas")
-            window.document.appendChild(this._canvas)
+            window.document.body.appendChild(this._canvas)
         }
 
         // set canvas sizes
