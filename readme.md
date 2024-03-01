@@ -2,7 +2,7 @@
 
 A raycast engine written in TypeScript.
 
-You can play the demo [here](https://games.delarco.com.br/raycast-demo).
+You can play the demo at [https://games.delarco.com.br/raycast-demo](https://games.delarco.com.br/raycast-demo).
 
 ![Screenshot 01](screenshots/screenshot-01.png)
 ![Screenshot 02](screenshots/screenshot-02.png)
@@ -15,7 +15,7 @@ Create a TypeScript project from scratch or using your favorite tool/framework:
 npm create vite@latest
 ```
 
-Install the raycats-engine package:
+Install the raycast-ts package:
 ```cmd
 npm install git+https://github.com/delarco/raycast-ts.git
 ```
@@ -122,6 +122,7 @@ public override init(): void {
 
 ## TODO
 
+* **tests**
 * Keymaps
 * Animated rectangle (sprites)
 * Create an AssetsManager
