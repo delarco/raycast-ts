@@ -1,14 +1,25 @@
 {
   "name": "raycast-ts",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "A raycast engine written in TypeScript",
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "raycast"
+    "raycast",
+    "engine",
+    "typescript"
   ],
-  "author": "Leandro Del Arco",
+  "homepage": "https://github.com/delarco/raycast-ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/delarco/raycast-ts.git"
+  },
+  "author": {
+    "name": "Leandro Del Arco",
+    "email": "leandrodelarco@outlook.com",
+    "url": "https://github.com/delarco"
+  },
   "license": "MIT"
 }
